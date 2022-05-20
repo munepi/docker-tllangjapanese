@@ -19,14 +19,17 @@ ENV TL_TEXMFDIST       ${TL_TEXDIR}/texmf-dist
 ENV PATH               ${TL_TEXDIR}/bin/${TLARCH}-linux:${PATH}
 
 ENV TL_ADDITIONAL_PACKAGES        \
-        algorithms mnsymbol ebgaramond fontawesome inconsolata sourcecodepro \
+        algorithms mnsymbol ebgaramond fontawesome inconsolata noto-emoji sourcecodepro \
         stix2-otf stix2-type1 ulem
 
 ## setup
 RUN apt-get update && \
         apt-get install -y --no-install-recommends \
-        locales make git-core wget xz-utils xzdec ca-certificates \
-        ghostscript ruby && \
+        locales make git-core unzip wget xz-utils xzdec ca-certificates \
+        ghostscript ruby \
+        ## for XeTeX
+        fontconfig \
+        && \
         apt-get clean && \
         rm -rf /var/lib/apt/lists/*
 RUN echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen && \
@@ -52,7 +55,7 @@ FROM tllangjapanese-base AS tllangjapanese-tl12
 ENV TL_VERSION       2012
 
 ENV TL_ADDITIONAL_PACKAGES        \
-        algorithms mnsymbol ebgaramond fontawesome inconsolata sourcecodepro \
+        algorithms mnsymbol ebgaramond fontawesome inconsolata noto-emoji sourcecodepro \
         ulem
 
 RUN mkdir install-tl-unx && \
@@ -67,6 +70,7 @@ RUN mkdir install-tl-unx && \
             "TEXMFVAR ${TL_TEXMFVAR}" \
             "TEXMFCONFIG ${TL_TEXMFCONFIG}" \
             "selected_scheme scheme-minimal" \
+            "binary_${TLARCH}-linux 1" \
             "collection-binextra 1" \
             "collection-langjapanese 1" \
             "collection-latexextra 1" \
@@ -101,7 +105,7 @@ FROM tllangjapanese-base AS tllangjapanese-tl13
 ENV TL_VERSION       2013
 
 ENV TL_ADDITIONAL_PACKAGES        \
-        algorithms mnsymbol ebgaramond fontawesome inconsolata sourcecodepro \
+        algorithms mnsymbol ebgaramond fontawesome inconsolata noto-emoji sourcecodepro \
         ulem
 
 RUN mkdir install-tl-unx && \
@@ -116,6 +120,7 @@ RUN mkdir install-tl-unx && \
             "TEXMFVAR ${TL_TEXMFVAR}" \
             "TEXMFCONFIG ${TL_TEXMFCONFIG}" \
             "selected_scheme scheme-minimal" \
+            "binary_${TLARCH}-linux 1" \
             "collection-binextra 1" \
             "collection-langjapanese 1" \
             "collection-latexextra 1" \
@@ -150,7 +155,7 @@ FROM tllangjapanese-base AS tllangjapanese-tl14
 ENV TL_VERSION       2014
 
 ENV TL_ADDITIONAL_PACKAGES        \
-        algorithms mnsymbol ebgaramond fontawesome inconsolata sourcecodepro \
+        algorithms mnsymbol ebgaramond fontawesome inconsolata noto-emoji sourcecodepro \
         ulem
 
 RUN mkdir install-tl-unx && \
@@ -165,6 +170,7 @@ RUN mkdir install-tl-unx && \
             "TEXMFVAR ${TL_TEXMFVAR}" \
             "TEXMFCONFIG ${TL_TEXMFCONFIG}" \
             "selected_scheme scheme-minimal" \
+            "binary_${TLARCH}-linux 1" \
             "collection-binextra 1" \
             "collection-langjapanese 1" \
             "collection-latexextra 1" \
@@ -199,7 +205,7 @@ FROM tllangjapanese-base AS tllangjapanese-tl15
 ENV TL_VERSION       2015
 
 ENV TL_ADDITIONAL_PACKAGES        \
-        algorithms mnsymbol ebgaramond fontawesome inconsolata sourcecodepro \
+        algorithms mnsymbol ebgaramond fontawesome inconsolata noto-emoji sourcecodepro \
         ulem
 
 RUN mkdir install-tl-unx && \
@@ -214,6 +220,7 @@ RUN mkdir install-tl-unx && \
             "TEXMFVAR ${TL_TEXMFVAR}" \
             "TEXMFCONFIG ${TL_TEXMFCONFIG}" \
             "selected_scheme scheme-minimal" \
+            "binary_${TLARCH}-linux 1" \
             "collection-binextra 1" \
             "collection-langjapanese 1" \
             "collection-latexextra 1" \
@@ -248,7 +255,7 @@ FROM tllangjapanese-base AS tllangjapanese-tl16
 ENV TL_VERSION       2016
 
 ENV TL_ADDITIONAL_PACKAGES        \
-        algorithms mnsymbol ebgaramond fontawesome inconsolata sourcecodepro \
+        algorithms mnsymbol ebgaramond fontawesome inconsolata noto-emoji sourcecodepro \
         ulem
 
 RUN mkdir install-tl-unx && \
@@ -263,6 +270,7 @@ RUN mkdir install-tl-unx && \
             "TEXMFVAR ${TL_TEXMFVAR}" \
             "TEXMFCONFIG ${TL_TEXMFCONFIG}" \
             "selected_scheme scheme-minimal" \
+            "binary_${TLARCH}-linux 1" \
             "collection-binextra 1" \
             "collection-langjapanese 1" \
             "collection-latexextra 1" \
@@ -297,7 +305,7 @@ FROM tllangjapanese-base AS tllangjapanese-tl17
 ENV TL_VERSION       2017
 
 ENV TL_ADDITIONAL_PACKAGES        \
-        algorithms mnsymbol ebgaramond fontawesome inconsolata sourcecodepro \
+        algorithms mnsymbol ebgaramond fontawesome inconsolata noto-emoji sourcecodepro \
         ulem
 
 RUN mkdir install-tl-unx && \
@@ -312,6 +320,7 @@ RUN mkdir install-tl-unx && \
             "TEXMFVAR ${TL_TEXMFVAR}" \
             "TEXMFCONFIG ${TL_TEXMFCONFIG}" \
             "selected_scheme scheme-minimal" \
+            "binary_${TLARCH}-linux 1" \
             "collection-binextra 1" \
             "collection-langjapanese 1" \
             "collection-latexextra 1" \
@@ -358,6 +367,7 @@ RUN mkdir install-tl-unx && \
             "TEXMFVAR ${TL_TEXMFVAR}" \
             "TEXMFCONFIG ${TL_TEXMFCONFIG}" \
             "selected_scheme scheme-minimal" \
+            "binary_${TLARCH}-linux 1" \
             "collection-binextra 1" \
             "collection-langjapanese 1" \
             "collection-latexextra 1" \
@@ -404,6 +414,7 @@ RUN mkdir install-tl-unx && \
             "TEXMFVAR ${TL_TEXMFVAR}" \
             "TEXMFCONFIG ${TL_TEXMFCONFIG}" \
             "selected_scheme scheme-minimal" \
+            "binary_${TLARCH}-linux 1" \
             "collection-binextra 1" \
             "collection-langjapanese 1" \
             "collection-latexextra 1" \
@@ -450,6 +461,7 @@ RUN mkdir install-tl-unx && \
             "TEXMFVAR ${TL_TEXMFVAR}" \
             "TEXMFCONFIG ${TL_TEXMFCONFIG}" \
             "selected_scheme scheme-minimal" \
+            "binary_${TLARCH}-linux 1" \
             "collection-binextra 1" \
             "collection-langjapanese 1" \
             "collection-latexextra 1" \
@@ -496,6 +508,7 @@ RUN mkdir install-tl-unx && \
             "TEXMFVAR ${TL_TEXMFVAR}" \
             "TEXMFCONFIG ${TL_TEXMFCONFIG}" \
             "selected_scheme scheme-minimal" \
+            "binary_${TLARCH}-linux 1" \
             "collection-binextra 1" \
             "collection-langjapanese 1" \
             "collection-latexextra 1" \
@@ -542,6 +555,7 @@ RUN mkdir install-tl-unx && \
             "TEXMFVAR ${TL_TEXMFVAR}" \
             "TEXMFCONFIG ${TL_TEXMFCONFIG}" \
             "selected_scheme scheme-minimal" \
+            "binary_${TLARCH}-linux 1" \
             "collection-binextra 1" \
             "collection-langjapanese 1" \
             "collection-latexextra 1" \
