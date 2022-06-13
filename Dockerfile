@@ -19,7 +19,7 @@ ENV TL_TEXMFDIST       ${TL_TEXDIR}/texmf-dist
 ENV PATH               ${TL_TEXDIR}/bin/${TLARCH}-linux:${PATH}
 
 ENV TL_ADDITIONAL_PACKAGES        \
-        algorithms mnsymbol ebgaramond fontawesome inconsolata noto-emoji sourcecodepro \
+        algorithms mnsymbol ebgaramond fontawesome inconsolata noto-emoji sourcecodepro sourcesanspro \
         stix2-otf stix2-type1 ulem
 
 ## setup
@@ -55,7 +55,7 @@ FROM tllangjapanese-base AS tllangjapanese-tl12
 ENV TL_VERSION       2012
 
 ENV TL_ADDITIONAL_PACKAGES        \
-        algorithms mnsymbol ebgaramond fontawesome inconsolata noto-emoji sourcecodepro \
+        algorithms mnsymbol ebgaramond fontawesome inconsolata sourcecodepro sourcesanspro \
         ulem
 
 RUN mkdir install-tl-unx && \
@@ -105,7 +105,7 @@ FROM tllangjapanese-base AS tllangjapanese-tl13
 ENV TL_VERSION       2013
 
 ENV TL_ADDITIONAL_PACKAGES        \
-        algorithms mnsymbol ebgaramond fontawesome inconsolata noto-emoji sourcecodepro \
+        algorithms mnsymbol ebgaramond fontawesome inconsolata sourcecodepro sourcesanspro \
         ulem
 
 RUN mkdir install-tl-unx && \
@@ -155,7 +155,7 @@ FROM tllangjapanese-base AS tllangjapanese-tl14
 ENV TL_VERSION       2014
 
 ENV TL_ADDITIONAL_PACKAGES        \
-        algorithms mnsymbol ebgaramond fontawesome inconsolata noto-emoji sourcecodepro \
+        algorithms mnsymbol ebgaramond fontawesome inconsolata sourcecodepro sourcesanspro \
         ulem
 
 RUN mkdir install-tl-unx && \
@@ -205,7 +205,7 @@ FROM tllangjapanese-base AS tllangjapanese-tl15
 ENV TL_VERSION       2015
 
 ENV TL_ADDITIONAL_PACKAGES        \
-        algorithms mnsymbol ebgaramond fontawesome inconsolata noto-emoji sourcecodepro \
+        algorithms mnsymbol ebgaramond fontawesome inconsolata sourcecodepro sourcesanspro \
         ulem
 
 RUN mkdir install-tl-unx && \
@@ -255,7 +255,7 @@ FROM tllangjapanese-base AS tllangjapanese-tl16
 ENV TL_VERSION       2016
 
 ENV TL_ADDITIONAL_PACKAGES        \
-        algorithms mnsymbol ebgaramond fontawesome inconsolata noto-emoji sourcecodepro \
+        algorithms mnsymbol ebgaramond fontawesome inconsolata sourcecodepro sourcesanspro \
         ulem
 
 RUN mkdir install-tl-unx && \
@@ -305,7 +305,7 @@ FROM tllangjapanese-base AS tllangjapanese-tl17
 ENV TL_VERSION       2017
 
 ENV TL_ADDITIONAL_PACKAGES        \
-        algorithms mnsymbol ebgaramond fontawesome inconsolata noto-emoji sourcecodepro \
+        algorithms mnsymbol ebgaramond fontawesome inconsolata sourcecodepro sourcesanspro \
         ulem
 
 RUN mkdir install-tl-unx && \
@@ -354,6 +354,10 @@ RUN mkdir -p ${TL_TEXMFCONFIG}/web2c/ && \
 FROM tllangjapanese-base AS tllangjapanese-tl18
 
 ENV TL_VERSION       2018
+
+ENV TL_ADDITIONAL_PACKAGES        \
+        algorithms mnsymbol ebgaramond fontawesome inconsolata sourcecodepro sourcesanspro \
+        stix2-otf stix2-type1 ulem
 
 RUN mkdir install-tl-unx && \
         wget -qO- https://texlive.texjp.org/${TL_VERSION}/tlnet/install-tl-unx.tar.gz | \
