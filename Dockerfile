@@ -40,10 +40,13 @@ RUN echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen && \
 RUN mkdir -p ${TL_TEXMFLOCAL} && \
         wget -qO- https://texlive.texjp.org/2022/tlnet/archive/ptex-fontmaps.tar.xz | \
         tar -xJ -C ${TL_TEXMFLOCAL} --strip-components=1 && \
+            rm -rf tlpobj tlpostcode && \
         wget -qO- https://texlive.texjp.org/2022/tlnet/archive/haranoaji.tar.xz | \
         tar -xJ -C ${TL_TEXMFLOCAL} --strip-components=1 && \
+            rm -rf tlpobj tlpostcode && \
         wget -qO- https://texlive.texjp.org/2022/tlnet/archive/haranoaji-extra.tar.xz | \
-        tar -xJ -C ${TL_TEXMFLOCAL} --strip-components=1
+        tar -xJ -C ${TL_TEXMFLOCAL} && \
+            rm -rf tlpkg
 
 VOLUME ["${TL_TEXMFVAR}/luatex-cache"]
 CMD [ "/bin/bash" ]
