@@ -26,7 +26,7 @@ ENV TL_ADDITIONAL_PACKAGES        \
 RUN apt-get update && \
         apt-get install -y --no-install-recommends \
         locales make git-core unzip wget xz-utils xzdec ca-certificates \
-        ghostscript ruby \
+        ghostscript ruby file imagemagick \
         ## for XeTeX
         fontconfig \
         && \
