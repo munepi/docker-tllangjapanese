@@ -5,7 +5,7 @@ custom enriched Japanese TeX Live environment image
 ## Supported tags and respective `Dockerfile` links
 
  * [`latest` = `2022` = `2022.20220424`](https://github.com/munepi/docker-tllangjapanese/blob/20220424/Dockerfile): TeX Live 2022 current (`x86_64-linux`, `aarch64-linux`)
- * [`2021` = `2021.20220520`](https://github.com/munepi/docker-tllangjapanese/blob/20220520/Dockerfile): TeX Live 2021 frozen (`x86_64-linux`, `aarch64-linux`)
+ * [`2021` = `2021.20221111`](https://github.com/munepi/docker-tllangjapanese/blob/20221111/Dockerfile): TeX Live 2021 frozen (`x86_64-linux`, `aarch64-linux`)
  * [`2020` = `2020.20220424`](https://github.com/munepi/docker-tllangjapanese/blob/20220424/Dockerfile): TeX Live 2020 frozen (`x86_64-linux`, `aarch64-linux`)
  * [`2019` = `2019.20220424`](https://github.com/munepi/docker-tllangjapanese/blob/20220424/Dockerfile): TeX Live 2019 frozen (`x86_64-linux`, `aarch64-linux`)
  * [`2018` = `2018.20220614`](https://github.com/munepi/docker-tllangjapanese/blob/20220614/Dockerfile): TeX Live 2018 frozen (`x86_64-linux`, `aarch64-linux`)
@@ -43,12 +43,14 @@ custom Debian GNU/Linux image
 
 ## Supported tags and respective `Dockerfile` links
 
- * [`latest` = `20220614`](https://github.com/munepi/docker-tllangjapanese/blob/20220614/Dockerfile): based on `debian:bullseye-slim` (`linux/amd64`, `linux/arm64`)
+ * [`latest` = `20221111`](https://github.com/munepi/docker-tllangjapanese/blob/20220614/Dockerfile): based on `debian:bullseye-slim` (`linux/amd64`, `linux/arm64`)
  * `20211024`: based on `debian:buster-slim` (`linux/amd64`)
 
 These images contain the following packages:
 
  * ca-certificates
+ * file
+ * imagemagick
  * git-core
  * ghostscript
  * make
