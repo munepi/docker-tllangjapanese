@@ -36,7 +36,7 @@ RUN echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen && \
         locale-gen en_US.UTF-8 && \
         update-locale en_US.UTF-8
 
-## setup texmf-local & install HaranoAjiFont font from TL22
+## setup texmf-local & install HaranoAjiFont font from TL23
 RUN mkdir -p ${TL_TEXMFLOCAL} && \
         wget -qO- https://texlive.texjp.org/2022/tlnet/archive/ptex-fontmaps.tar.xz | \
         tar -xJ -C ${TL_TEXMFLOCAL} --strip-components=1 && \
@@ -549,6 +549,53 @@ RUN mkdir -p ${TL_TEXMFCONFIG}/web2c/ && \
 FROM tllangjapanese-base AS tllangjapanese-tl22
 
 ENV TL_VERSION       2022
+
+RUN mkdir install-tl-unx && \
+        wget -qO- https://texlive.texjp.org/${TL_VERSION}/tlnet/install-tl-unx.tar.gz | \
+        tar -xz -C ./install-tl-unx --strip-components=1 && \
+        printf "%s\n" \
+            "TEXDIR ${TL_TEXDIR}" \
+            "TEXMFLOCAL ${TL_TEXMFLOCAL}" \
+            "TEXMFSYSVAR ${TL_TEXMFVAR}" \
+            "TEXMFSYSCONFIG ${TL_TEXMFCONFIG}" \
+            "TEXMFHOME ${TL_TEXMFLOCAL}" \
+            "TEXMFVAR ${TL_TEXMFVAR}" \
+            "TEXMFCONFIG ${TL_TEXMFCONFIG}" \
+            "selected_scheme scheme-minimal" \
+            "binary_${TLARCH}-linux 1" \
+            "collection-binextra 1" \
+            "collection-langjapanese 1" \
+            "collection-latexextra 1" \
+            "collection-luatex 1" \
+            "collection-fontsrecommended 1" \
+            "option_adjustrepo 0" \
+            "option_autobackup 0" \
+            "option_doc 0" \
+            "option_src 0" \
+        > ./install-tl-unx/texlive.profile && \
+        ./install-tl-unx/install-tl \
+        -repository https://texlive.texjp.org/${TL_VERSION}/tlnet/ \
+        -profile ./install-tl-unx/texlive.profile && \
+        rm -rf install-tl-unx/
+
+## install additional packages
+RUN tlmgr install ${TL_ADDITIONAL_PACKAGES}
+
+## update font map files & check current kanji profile
+RUN mkdir -p ${TL_TEXMFCONFIG}/web2c/ && \
+        printf "%s\n" \
+            "jaEmbed haranoaji" \
+            "kanjiEmbed haranoaji" \
+            "kanjiVariant " \
+        > ${TL_TEXMFCONFIG}/web2c/updmap.cfg && \
+        mktexlsr ${TL_TEXMFLOCAL}/ ${TL_TEXMFCONFIG}/ && \
+        updmap-sys
+
+
+## TeX Live 2023 current
+FROM tllangjapanese-base AS tllangjapanese-tl23
+
+ENV TL_VERSION       2023
 
 RUN mkdir install-tl-unx && \
         wget -qO- https://texlive.texjp.org/${TL_VERSION}/tlnet/install-tl-unx.tar.gz | \
