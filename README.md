@@ -10,7 +10,7 @@ custom enriched Japanese TeX Live environment image
  * [`2020` = `2020.20220424`](https://github.com/munepi/docker-tllangjapanese/blob/20220424/Dockerfile): TeX Live 2020 frozen (`x86_64-linux`, `aarch64-linux`)
  * [`2019` = `2019.20221112`](https://github.com/munepi/docker-tllangjapanese/blob/20221112/Dockerfile): TeX Live 2019 frozen (`x86_64-linux`, `aarch64-linux`)
  * [`2018` = `2018.20220614`](https://github.com/munepi/docker-tllangjapanese/blob/20220614/Dockerfile): TeX Live 2018 frozen (`x86_64-linux`, `aarch64-linux`)
- * `2017` = `2017.20211024`: TeX Live 2017 frozen (`x86_64-linux`)
+ * [`2017` = `2017.20230508`](https://github.com/munepi/docker-tllangjapanese/blob/20230506/Dockerfile): TeX Live 2017 frozen (`x86_64-linux`, `aarch64-linux`)
  * `2016` = `2016.20211024`: TeX Live 2016 frozen (`x86_64-linux`)
  * `2015` = `2015.20211024`: TeX Live 2015 frozen (`x86_64-linux`)
  * `2014` = `2014.20211024`: TeX Live 2014 frozen (`x86_64-linux`)
@@ -45,7 +45,7 @@ custom Debian GNU/Linux image
 
 ## Supported tags and respective `Dockerfile` links
 
- * [`latest` = `20221111`](https://github.com/munepi/docker-tllangjapanese/blob/20220614/Dockerfile): based on `debian:bullseye-slim` (`linux/amd64`, `linux/arm64`)
+ * [`latest` = `20230506`](https://github.com/munepi/docker-tllangjapanese/blob/20230506/Dockerfile), [`20221111`](https://github.com/munepi/docker-tllangjapanese/blob/20220614/Dockerfile): based on `debian:bullseye-slim` (`linux/amd64`, `linux/arm64`)
  * `20211024`: based on `debian:buster-slim` (`linux/amd64`)
 
 These images contain the following packages:
