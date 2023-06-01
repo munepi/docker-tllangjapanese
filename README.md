@@ -5,7 +5,7 @@ custom enriched Japanese TeX Live environment image
 ## Supported tags and respective `Dockerfile` links
 
  * [`latest` = `2023` = `2023.20230506`](https://github.com/munepi/docker-tllangjapanese/blob/20230506/Dockerfile): TeX Live 2023 current (`x86_64-linux`, `aarch64-linux`)
- * [`2022` = `2022.20230506`](https://github.com/munepi/docker-tllangjapanese/blob/20230506/Dockerfile): TeX Live 2022 frozen (`x86_64-linux`, `aarch64-linux`)
+ * [`2022` = `2022.20230602`](https://github.com/munepi/docker-tllangjapanese/blob/20230602/Dockerfile): TeX Live 2022 frozen (`x86_64-linux`, `aarch64-linux`)
  * [`2021` = `2021.20221111`](https://github.com/munepi/docker-tllangjapanese/blob/20221111/Dockerfile): TeX Live 2021 frozen (`x86_64-linux`, `aarch64-linux`)
  * [`2020` = `2020.20220424`](https://github.com/munepi/docker-tllangjapanese/blob/20220424/Dockerfile): TeX Live 2020 frozen (`x86_64-linux`, `aarch64-linux`)
  * [`2019` = `2019.20221112`](https://github.com/munepi/docker-tllangjapanese/blob/20221112/Dockerfile): TeX Live 2019 frozen (`x86_64-linux`, `aarch64-linux`)
@@ -27,7 +27,10 @@ These images contain the following components:
 
 Some tags below contain additional packages:
 
- * `latest` = `20230506`
+ * `20230602`
+    * tlmgr: add roboto
+ * `20230506`
+    * tlmgr: add physics systeme
  * `20220614`
     * tlmgr: add sourcesanspro
  * `20220520`
