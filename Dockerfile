@@ -19,8 +19,18 @@ ENV TL_TEXMFDIST       ${TL_TEXDIR}/texmf-dist
 ENV PATH               ${TL_TEXDIR}/bin/${TLARCH}-linux:${PATH}
 
 ENV TL_ADDITIONAL_PACKAGES        \
-        algorithms mnsymbol ebgaramond fontawesome inconsolata noto-emoji sourcecodepro sourcesanspro \
-        stix2-otf stix2-type1 ulem
+    algorithms \
+    ebgaramond \
+    fontawesome \
+    inconsolata \
+    mnsymbol \
+    noto-emoji \
+    physics \
+    roboto \
+    sourcecodepro sourcesanspro \
+    stix2-otf stix2-type1 \
+    systeme \
+    ulem
 
 ## setup
 RUN apt-get update && \
