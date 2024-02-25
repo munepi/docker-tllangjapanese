@@ -5,7 +5,7 @@ custom enriched Japanese TeX Live environment image
 ## Supported tags and respective `Dockerfile` links
 
  * [`latest` = `2023` = `2023.20230506`](https://github.com/munepi/docker-tllangjapanese/blob/20230506/Dockerfile): TeX Live 2023 current (`x86_64-linux`, `aarch64-linux`)
- * [`2022` = `2022.20230602`](https://github.com/munepi/docker-tllangjapanese/blob/20230602/Dockerfile): TeX Live 2022 frozen (`x86_64-linux`, `aarch64-linux`)
+ * [`2022` = `2022.20240225`](https://github.com/munepi/docker-tllangjapanese/blob/20240225/Dockerfile): TeX Live 2022 frozen (`x86_64-linux`, `aarch64-linux`)
  * [`2021` = `2021.20221111`](https://github.com/munepi/docker-tllangjapanese/blob/20221111/Dockerfile): TeX Live 2021 frozen (`x86_64-linux`, `aarch64-linux`)
  * [`2020` = `2020.20220424`](https://github.com/munepi/docker-tllangjapanese/blob/20220424/Dockerfile): TeX Live 2020 frozen (`x86_64-linux`, `aarch64-linux`)
  * [`2019` = `2019.20221112`](https://github.com/munepi/docker-tllangjapanese/blob/20221112/Dockerfile): TeX Live 2019 frozen (`x86_64-linux`, `aarch64-linux`)
@@ -27,18 +27,21 @@ These images contain the following components:
 
 Some tags below contain additional packages:
 
+ * `20240225`
+    * tlmgr: add algorithmicx bbold bbold-type1 (TL12+)
  * `20230602`
-    * tlmgr: add roboto
+    * tlmgr: add roboto (TL14+)
  * `20230506`
-    * tlmgr: add physics systeme
+    * tlmgr: add physics systeme (TL12+)
  * `20220614`
-    * tlmgr: add sourcesanspro
+    * tlmgr: add sourcesanspro (TL12+)
  * `20220520`
-    * tlmgr: add noto-emoji (tl19+)
+    * tlmgr: add noto-emoji (TL19+)
  * `20220424`
-    * tlmgr: add fontawesome, sourcecodepro, stix2-otf (tl18+), stix2-type1 (tl18+), ulem
+    * tlmgr: add fontawesome sourcecodepro ulem (TL12+)
+    * tlmgr: add stix2-otf stix2-type1 (TL18+)
  * `20211024`
-    * tlmgr: add algorithms, mnsymbol, ebgaramond, inconsolata
+    * tlmgr: add algorithms mnsymbol ebgaramond inconsolata (TL12+)
 
 These images are based on [munepi/tllangjapanese-base](https://hub.docker.com/r/munepi/tllangjapanese-base).
 
@@ -48,7 +51,8 @@ custom Debian GNU/Linux image
 
 ## Supported tags and respective `Dockerfile` links
 
- * [`latest` = `20230506`](https://github.com/munepi/docker-tllangjapanese/blob/20230506/Dockerfile), [`20221111`](https://github.com/munepi/docker-tllangjapanese/blob/20220614/Dockerfile): based on `debian:bullseye-slim` (`linux/amd64`, `linux/arm64`)
+ * [`latest` = `20240225`](https://github.com/munepi/docker-tllangjapanese/blob/20240225/Dockerfile), [`20230703`](https://github.com/munepi/docker-tllangjapanese/blob/20230703/Dockerfile): based on `debian:bookworm-slim` (`linux/amd64`, `linux/arm64`)
+ * [`20230506`](https://github.com/munepi/docker-tllangjapanese/blob/20230506/Dockerfile), [`20221111`](https://github.com/munepi/docker-tllangjapanese/blob/20220614/Dockerfile): based on `debian:bullseye-slim` (`linux/amd64`, `linux/arm64`)
  * `20211024`: based on `debian:buster-slim` (`linux/amd64`)
 
 These images contain the following packages:
