@@ -1,5 +1,5 @@
 ## bootstrap
-FROM debian:bullseye-slim AS tllangjapanese-base
+FROM debian:bookworm-slim AS tllangjapanese-base
 
 LABEL maintainer="munepi@greencherry.jp"
 
@@ -18,19 +18,43 @@ ENV TL_TEXMFDIST       ${TL_TEXDIR}/texmf-dist
 
 ENV PATH               ${TL_TEXDIR}/bin/${TLARCH}-linux:${PATH}
 
-ENV TL_ADDITIONAL_PACKAGES        \
-    algorithms \
+## TeX Live additional packages
+ENV TL_PKGS_TL12        \
+    algorithms algorithmicx \
+    bbold bbold-type1 \
     ebgaramond \
     fontawesome \
     inconsolata \
     mnsymbol \
-    noto-emoji \
     physics \
-    roboto \
     sourcecodepro sourcesanspro \
-    stix2-otf stix2-type1 \
     systeme \
     ulem
+ENV TL_PKGS_TL13        \
+    ${TL_PKGS_TL12}
+ENV TL_PKGS_TL14        \
+    ${TL_PKGS_TL13} \
+    roboto
+ENV TL_PKGS_TL15        \
+    ${TL_PKGS_TL14}
+ENV TL_PKGS_TL16        \
+    ${TL_PKGS_TL15}
+ENV TL_PKGS_TL17        \
+    ${TL_PKGS_TL16}
+ENV TL_PKGS_TL18        \
+    ${TL_PKGS_TL17} \
+    stix2-otf stix2-type1
+ENV TL_PKGS_TL19        \
+    ${TL_PKGS_TL18} \
+    noto-emoji
+ENV TL_PKGS_TL20        \
+    ${TL_PKGS_TL19}
+ENV TL_PKGS_TL21        \
+    ${TL_PKGS_TL20}
+ENV TL_PKGS_TL22        \
+    ${TL_PKGS_TL21}
+ENV TL_PKGS_TL23        \
+    ${TL_PKGS_TL22}
 
 ## setup
 RUN apt-get update && \
@@ -48,13 +72,13 @@ RUN echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen && \
 
 ## setup texmf-local & install HaranoAjiFont font from TL23
 RUN mkdir -p ${TL_TEXMFLOCAL} && \
-        wget -qO- https://texlive.texjp.org/2022/tlnet/archive/ptex-fontmaps.tar.xz | \
+        wget -qO- https://texlive.texjp.org/2023/tlnet/archive/ptex-fontmaps.tar.xz | \
         tar -xJ -C ${TL_TEXMFLOCAL} --strip-components=1 && \
             rm -rf tlpobj tlpostcode && \
-        wget -qO- https://texlive.texjp.org/2022/tlnet/archive/haranoaji.tar.xz | \
+        wget -qO- https://texlive.texjp.org/2023/tlnet/archive/haranoaji.tar.xz | \
         tar -xJ -C ${TL_TEXMFLOCAL} --strip-components=1 && \
             rm -rf tlpobj tlpostcode && \
-        wget -qO- https://texlive.texjp.org/2022/tlnet/archive/haranoaji-extra.tar.xz | \
+        wget -qO- https://texlive.texjp.org/2023/tlnet/archive/haranoaji-extra.tar.xz | \
         tar -xJ -C ${TL_TEXMFLOCAL} && \
             rm -rf tlpkg
 
@@ -65,11 +89,8 @@ CMD [ "/bin/bash" ]
 ## TeX Live 2012 frozen
 FROM tllangjapanese-base AS tllangjapanese-tl12
 
-ENV TL_VERSION       2012
-
-ENV TL_ADDITIONAL_PACKAGES        \
-        algorithms mnsymbol ebgaramond fontawesome inconsolata sourcecodepro sourcesanspro \
-        ulem
+ENV TL_VERSION					2012
+ENV TL_ADDITIONAL_PACKAGES		${TL_PKGS_TL12}
 
 RUN mkdir install-tl-unx && \
         wget -qO- https://texlive.texjp.org/${TL_VERSION}/tlnet/install-tl-unx.tar.gz | \
@@ -110,16 +131,24 @@ RUN mkdir -p ${TL_TEXMFCONFIG}/web2c/ && \
         > ${TL_TEXMFCONFIG}/web2c/updmap.cfg && \
         mktexlsr ${TL_TEXMFLOCAL}/ ${TL_TEXMFCONFIG}/ && \
         updmap-sys
+
+## setup suitable texmf.cnf
+RUN printf "%s\n" \
+        "texmf_casefold_search = 0" \
+        "font_mem_size = 16000000 " \
+        "font_max = 18000         " \
+        "ent_str_size = 2000      " \
+        "error_line = 254         " \
+        "half_error_line = 238    " \
+        "max_print_line = 1048576 " \
+    >>${TL_TEXDIR}/texmf.cnf
 
 
 ## TeX Live 2013 frozen
 FROM tllangjapanese-base AS tllangjapanese-tl13
 
-ENV TL_VERSION       2013
-
-ENV TL_ADDITIONAL_PACKAGES        \
-        algorithms mnsymbol ebgaramond fontawesome inconsolata sourcecodepro sourcesanspro \
-        ulem
+ENV TL_VERSION					2013
+ENV TL_ADDITIONAL_PACKAGES		${TL_PKGS_TL13}
 
 RUN mkdir install-tl-unx && \
         wget -qO- https://texlive.texjp.org/${TL_VERSION}/tlnet/install-tl-unx.tar.gz | \
@@ -160,16 +189,24 @@ RUN mkdir -p ${TL_TEXMFCONFIG}/web2c/ && \
         > ${TL_TEXMFCONFIG}/web2c/updmap.cfg && \
         mktexlsr ${TL_TEXMFLOCAL}/ ${TL_TEXMFCONFIG}/ && \
         updmap-sys
+
+## setup suitable texmf.cnf
+RUN printf "%s\n" \
+        "texmf_casefold_search = 0" \
+        "font_mem_size = 16000000 " \
+        "font_max = 18000         " \
+        "ent_str_size = 2000      " \
+        "error_line = 254         " \
+        "half_error_line = 238    " \
+        "max_print_line = 1048576 " \
+    >>${TL_TEXDIR}/texmf.cnf
 
 
 ## TeX Live 2014 frozen
 FROM tllangjapanese-base AS tllangjapanese-tl14
 
-ENV TL_VERSION       2014
-
-ENV TL_ADDITIONAL_PACKAGES        \
-        algorithms mnsymbol ebgaramond fontawesome inconsolata sourcecodepro sourcesanspro \
-        ulem
+ENV TL_VERSION					2014
+ENV TL_ADDITIONAL_PACKAGES		${TL_PKGS_TL14}
 
 RUN mkdir install-tl-unx && \
         wget -qO- https://texlive.texjp.org/${TL_VERSION}/tlnet/install-tl-unx.tar.gz | \
@@ -210,16 +247,24 @@ RUN mkdir -p ${TL_TEXMFCONFIG}/web2c/ && \
         > ${TL_TEXMFCONFIG}/web2c/updmap.cfg && \
         mktexlsr ${TL_TEXMFLOCAL}/ ${TL_TEXMFCONFIG}/ && \
         updmap-sys
+
+## setup suitable texmf.cnf
+RUN printf "%s\n" \
+        "texmf_casefold_search = 0" \
+        "font_mem_size = 16000000 " \
+        "font_max = 18000         " \
+        "ent_str_size = 2000      " \
+        "error_line = 254         " \
+        "half_error_line = 238    " \
+        "max_print_line = 1048576 " \
+    >>${TL_TEXDIR}/texmf.cnf
 
 
 ## TeX Live 2015 frozen
 FROM tllangjapanese-base AS tllangjapanese-tl15
 
-ENV TL_VERSION       2015
-
-ENV TL_ADDITIONAL_PACKAGES        \
-        algorithms mnsymbol ebgaramond fontawesome inconsolata sourcecodepro sourcesanspro \
-        ulem
+ENV TL_VERSION					2015
+ENV TL_ADDITIONAL_PACKAGES		${TL_PKGS_TL15}
 
 RUN mkdir install-tl-unx && \
         wget -qO- https://texlive.texjp.org/${TL_VERSION}/tlnet/install-tl-unx.tar.gz | \
@@ -260,16 +305,24 @@ RUN mkdir -p ${TL_TEXMFCONFIG}/web2c/ && \
         > ${TL_TEXMFCONFIG}/web2c/updmap.cfg && \
         mktexlsr ${TL_TEXMFLOCAL}/ ${TL_TEXMFCONFIG}/ && \
         updmap-sys
+
+## setup suitable texmf.cnf
+RUN printf "%s\n" \
+        "texmf_casefold_search = 0" \
+        "font_mem_size = 16000000 " \
+        "font_max = 18000         " \
+        "ent_str_size = 2000      " \
+        "error_line = 254         " \
+        "half_error_line = 238    " \
+        "max_print_line = 1048576 " \
+    >>${TL_TEXDIR}/texmf.cnf
 
 
 ## TeX Live 2016 frozen
 FROM tllangjapanese-base AS tllangjapanese-tl16
 
-ENV TL_VERSION       2016
-
-ENV TL_ADDITIONAL_PACKAGES        \
-        algorithms mnsymbol ebgaramond fontawesome inconsolata sourcecodepro sourcesanspro \
-        ulem
+ENV TL_VERSION					2016
+ENV TL_ADDITIONAL_PACKAGES		${TL_PKGS_TL16}
 
 RUN mkdir install-tl-unx && \
         wget -qO- https://texlive.texjp.org/${TL_VERSION}/tlnet/install-tl-unx.tar.gz | \
@@ -310,16 +363,24 @@ RUN mkdir -p ${TL_TEXMFCONFIG}/web2c/ && \
         > ${TL_TEXMFCONFIG}/web2c/updmap.cfg && \
         mktexlsr ${TL_TEXMFLOCAL}/ ${TL_TEXMFCONFIG}/ && \
         updmap-sys
+
+## setup suitable texmf.cnf
+RUN printf "%s\n" \
+        "texmf_casefold_search = 0" \
+        "font_mem_size = 16000000 " \
+        "font_max = 18000         " \
+        "ent_str_size = 2000      " \
+        "error_line = 254         " \
+        "half_error_line = 238    " \
+        "max_print_line = 1048576 " \
+    >>${TL_TEXDIR}/texmf.cnf
 
 
 ## TeX Live 2017 frozen
 FROM tllangjapanese-base AS tllangjapanese-tl17
 
-ENV TL_VERSION       2017
-
-ENV TL_ADDITIONAL_PACKAGES        \
-        algorithms mnsymbol ebgaramond fontawesome inconsolata sourcecodepro sourcesanspro \
-        ulem
+ENV TL_VERSION					2017
+ENV TL_ADDITIONAL_PACKAGES		${TL_PKGS_TL17}
 
 RUN mkdir install-tl-unx && \
         wget -qO- https://texlive.texjp.org/${TL_VERSION}/tlnet/install-tl-unx.tar.gz | \
@@ -361,16 +422,24 @@ RUN mkdir -p ${TL_TEXMFCONFIG}/web2c/ && \
         > ${TL_TEXMFCONFIG}/web2c/updmap.cfg && \
         mktexlsr ${TL_TEXMFLOCAL}/ ${TL_TEXMFCONFIG}/ && \
         updmap-sys
+
+## setup suitable texmf.cnf
+RUN printf "%s\n" \
+        "texmf_casefold_search = 0" \
+        "font_mem_size = 16000000 " \
+        "font_max = 18000         " \
+        "ent_str_size = 2000      " \
+        "error_line = 254         " \
+        "half_error_line = 238    " \
+        "max_print_line = 1048576 " \
+    >>${TL_TEXDIR}/texmf.cnf
 
 
 ## TeX Live 2018 frozen
 FROM tllangjapanese-base AS tllangjapanese-tl18
 
-ENV TL_VERSION       2018
-
-ENV TL_ADDITIONAL_PACKAGES        \
-        algorithms mnsymbol ebgaramond fontawesome inconsolata sourcecodepro sourcesanspro \
-        stix2-otf stix2-type1 ulem
+ENV TL_VERSION					2018
+ENV TL_ADDITIONAL_PACKAGES		${TL_PKGS_TL18}
 
 RUN mkdir install-tl-unx && \
         wget -qO- https://texlive.texjp.org/${TL_VERSION}/tlnet/install-tl-unx.tar.gz | \
@@ -412,12 +481,24 @@ RUN mkdir -p ${TL_TEXMFCONFIG}/web2c/ && \
         > ${TL_TEXMFCONFIG}/web2c/updmap.cfg && \
         mktexlsr ${TL_TEXMFLOCAL}/ ${TL_TEXMFCONFIG}/ && \
         updmap-sys
+
+## setup suitable texmf.cnf
+RUN printf "%s\n" \
+        "texmf_casefold_search = 0" \
+        "font_mem_size = 16000000 " \
+        "font_max = 18000         " \
+        "ent_str_size = 2000      " \
+        "error_line = 254         " \
+        "half_error_line = 238    " \
+        "max_print_line = 1048576 " \
+    >>${TL_TEXDIR}/texmf.cnf
 
 
 ## TeX Live 2019 frozen
 FROM tllangjapanese-base AS tllangjapanese-tl19
 
-ENV TL_VERSION       2019
+ENV TL_VERSION					2019
+ENV TL_ADDITIONAL_PACKAGES		${TL_PKGS_TL19}
 
 RUN mkdir install-tl-unx && \
         wget -qO- https://texlive.texjp.org/${TL_VERSION}/tlnet/install-tl-unx.tar.gz | \
@@ -460,11 +541,23 @@ RUN mkdir -p ${TL_TEXMFCONFIG}/web2c/ && \
         mktexlsr ${TL_TEXMFLOCAL}/ ${TL_TEXMFCONFIG}/ && \
         updmap-sys
 
+## setup suitable texmf.cnf
+RUN printf "%s\n" \
+        "texmf_casefold_search = 0" \
+        "font_mem_size = 16000000 " \
+        "font_max = 18000         " \
+        "ent_str_size = 2000      " \
+        "error_line = 254         " \
+        "half_error_line = 238    " \
+        "max_print_line = 1048576 " \
+    >>${TL_TEXDIR}/texmf.cnf
+
 
 ## TeX Live 2020 frozen
 FROM tllangjapanese-base AS tllangjapanese-tl20
 
-ENV TL_VERSION       2020
+ENV TL_VERSION					2020
+ENV TL_ADDITIONAL_PACKAGES		${TL_PKGS_TL20}
 
 RUN mkdir install-tl-unx && \
         wget -qO- https://texlive.texjp.org/${TL_VERSION}/tlnet/install-tl-unx.tar.gz | \
@@ -497,6 +590,10 @@ RUN mkdir install-tl-unx && \
 ## install additional packages
 RUN tlmgr install ${TL_ADDITIONAL_PACKAGES}
 
+## reduced older/duplicated HaranoAji Fonts
+RUN rm -f ${TL_TEXMFDIST}/fonts/opentype/public/haranoaji/*.otf \
+    ${TL_TEXMFDIST}/fonts/opentype/public/haranoaji-extra/*.otf
+
 ## update font map files & check current kanji profile
 RUN mkdir -p ${TL_TEXMFCONFIG}/web2c/ && \
         printf "%s\n" \
@@ -506,12 +603,24 @@ RUN mkdir -p ${TL_TEXMFCONFIG}/web2c/ && \
         > ${TL_TEXMFCONFIG}/web2c/updmap.cfg && \
         mktexlsr ${TL_TEXMFLOCAL}/ ${TL_TEXMFCONFIG}/ && \
         updmap-sys
+
+## setup suitable texmf.cnf
+RUN printf "%s\n" \
+        "texmf_casefold_search = 0" \
+        "font_mem_size = 16000000 " \
+        "font_max = 18000         " \
+        "ent_str_size = 2000      " \
+        "error_line = 254         " \
+        "half_error_line = 238    " \
+        "max_print_line = 1048576 " \
+    >>${TL_TEXDIR}/texmf.cnf
 
 
 ## TeX Live 2021 frozen
 FROM tllangjapanese-base AS tllangjapanese-tl21
 
-ENV TL_VERSION       2021
+ENV TL_VERSION					2021
+ENV TL_ADDITIONAL_PACKAGES		${TL_PKGS_TL21}
 
 RUN mkdir install-tl-unx && \
         wget -qO- https://texlive.texjp.org/${TL_VERSION}/tlnet/install-tl-unx.tar.gz | \
@@ -544,6 +653,10 @@ RUN mkdir install-tl-unx && \
 ## install additional packages
 RUN tlmgr install ${TL_ADDITIONAL_PACKAGES}
 
+## reduced older/duplicated HaranoAji Fonts
+RUN rm -f ${TL_TEXMFDIST}/fonts/opentype/public/haranoaji/*.otf \
+    ${TL_TEXMFDIST}/fonts/opentype/public/haranoaji-extra/*.otf
+
 ## update font map files & check current kanji profile
 RUN mkdir -p ${TL_TEXMFCONFIG}/web2c/ && \
         printf "%s\n" \
@@ -553,12 +666,24 @@ RUN mkdir -p ${TL_TEXMFCONFIG}/web2c/ && \
         > ${TL_TEXMFCONFIG}/web2c/updmap.cfg && \
         mktexlsr ${TL_TEXMFLOCAL}/ ${TL_TEXMFCONFIG}/ && \
         updmap-sys
+
+## setup suitable texmf.cnf
+RUN printf "%s\n" \
+        "texmf_casefold_search = 0" \
+        "font_mem_size = 16000000 " \
+        "font_max = 18000         " \
+        "ent_str_size = 2000      " \
+        "error_line = 254         " \
+        "half_error_line = 238    " \
+        "max_print_line = 1048576 " \
+    >>${TL_TEXDIR}/texmf.cnf
 
 
 ## TeX Live 2022 frozen
 FROM tllangjapanese-base AS tllangjapanese-tl22
 
-ENV TL_VERSION       2022
+ENV TL_VERSION					2022
+ENV TL_ADDITIONAL_PACKAGES		${TL_PKGS_TL22}
 
 RUN mkdir install-tl-unx && \
         wget -qO- https://texlive.texjp.org/${TL_VERSION}/tlnet/install-tl-unx.tar.gz | \
@@ -591,6 +716,10 @@ RUN mkdir install-tl-unx && \
 ## install additional packages
 RUN tlmgr install ${TL_ADDITIONAL_PACKAGES}
 
+## reduced older/duplicated HaranoAji Fonts
+RUN rm -f ${TL_TEXMFDIST}/fonts/opentype/public/haranoaji/*.otf \
+    ${TL_TEXMFDIST}/fonts/opentype/public/haranoaji-extra/*.otf
+
 ## update font map files & check current kanji profile
 RUN mkdir -p ${TL_TEXMFCONFIG}/web2c/ && \
         printf "%s\n" \
@@ -600,12 +729,24 @@ RUN mkdir -p ${TL_TEXMFCONFIG}/web2c/ && \
         > ${TL_TEXMFCONFIG}/web2c/updmap.cfg && \
         mktexlsr ${TL_TEXMFLOCAL}/ ${TL_TEXMFCONFIG}/ && \
         updmap-sys
+
+## setup suitable texmf.cnf
+RUN printf "%s\n" \
+        "texmf_casefold_search = 0" \
+        "font_mem_size = 16000000 " \
+        "font_max = 18000         " \
+        "ent_str_size = 2000      " \
+        "error_line = 254         " \
+        "half_error_line = 238    " \
+        "max_print_line = 1048576 " \
+    >>${TL_TEXDIR}/texmf.cnf
 
 
 ## TeX Live 2023 current
 FROM tllangjapanese-base AS tllangjapanese-tl23
 
-ENV TL_VERSION       2023
+ENV TL_VERSION					2023
+ENV TL_ADDITIONAL_PACKAGES		${TL_PKGS_TL23}
 
 RUN mkdir install-tl-unx && \
         wget -qO- https://texlive.texjp.org/${TL_VERSION}/tlnet/install-tl-unx.tar.gz | \
@@ -638,6 +779,10 @@ RUN mkdir install-tl-unx && \
 ## install additional packages
 RUN tlmgr install ${TL_ADDITIONAL_PACKAGES}
 
+## reduced older/duplicated HaranoAji Fonts
+RUN rm -f ${TL_TEXMFDIST}/fonts/opentype/public/haranoaji/*.otf \
+    ${TL_TEXMFDIST}/fonts/opentype/public/haranoaji-extra/*.otf
+
 ## update font map files & check current kanji profile
 RUN mkdir -p ${TL_TEXMFCONFIG}/web2c/ && \
         printf "%s\n" \
@@ -647,5 +792,16 @@ RUN mkdir -p ${TL_TEXMFCONFIG}/web2c/ && \
         > ${TL_TEXMFCONFIG}/web2c/updmap.cfg && \
         mktexlsr ${TL_TEXMFLOCAL}/ ${TL_TEXMFCONFIG}/ && \
         updmap-sys
+
+## setup suitable texmf.cnf
+RUN printf "%s\n" \
+        "texmf_casefold_search = 0" \
+        "font_mem_size = 16000000 " \
+        "font_max = 18000         " \
+        "ent_str_size = 2000      " \
+        "error_line = 254         " \
+        "half_error_line = 238    " \
+        "max_print_line = 1048576 " \
+    >>${TL_TEXDIR}/texmf.cnf
 
 # end of file
