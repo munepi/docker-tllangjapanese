@@ -4,7 +4,8 @@ custom enriched Japanese TeX Live environment image
 
 ## Supported tags and respective `Dockerfile` links
 
- * [`latest` = `2023` = `2023.20240323`](https://github.com/munepi/docker-tllangjapanese/blob/20240323/Dockerfile): TeX Live 2023 frozen (`x86_64-linux`, `aarch64-linux`)
+ * [`latest` = `2024` = `2024.20240525`](https://github.com/munepi/docker-tllangjapanese/blob/20240525/Dockerfile): TeX Live 2024 current (`x86_64-linux`, `aarch64-linux`)
+ * [`2023` = `2023.20240323`](https://github.com/munepi/docker-tllangjapanese/blob/20240323/Dockerfile): TeX Live 2023 frozen (`x86_64-linux`, `aarch64-linux`)
  * [`2022` = `2022.20240225`](https://github.com/munepi/docker-tllangjapanese/blob/20240225/Dockerfile): TeX Live 2022 frozen (`x86_64-linux`, `aarch64-linux`)
  * [`2021` = `2021.20221111`](https://github.com/munepi/docker-tllangjapanese/blob/20221111/Dockerfile): TeX Live 2021 frozen (`x86_64-linux`, `aarch64-linux`)
  * [`2020` = `2020.20220424`](https://github.com/munepi/docker-tllangjapanese/blob/20220424/Dockerfile): TeX Live 2020 frozen (`x86_64-linux`, `aarch64-linux`)
@@ -46,15 +47,14 @@ Some tags below have additional/reduced packages:
 
 These images are based on [munepi/tllangjapanese-base](https://hub.docker.com/r/munepi/tllangjapanese-base).
 
+
 # munepi/tllangjapanese-base
 
 custom Debian GNU/Linux image
 
 ## Supported tags and respective `Dockerfile` links
 
- * [`latest` = `20240225`](https://github.com/munepi/docker-tllangjapanese/blob/20240225/Dockerfile), [`20230703`](https://github.com/munepi/docker-tllangjapanese/blob/20230703/Dockerfile): based on `debian:bookworm-slim` (`linux/amd64`, `linux/arm64`)
- * [`20230506`](https://github.com/munepi/docker-tllangjapanese/blob/20230506/Dockerfile), [`20221111`](https://github.com/munepi/docker-tllangjapanese/blob/20220614/Dockerfile): based on `debian:bullseye-slim` (`linux/amd64`, `linux/arm64`)
- * `20211024`: based on `debian:buster-slim` (`linux/amd64`)
+ * [`latest` = `20240525`](https://github.com/munepi/docker-tllangjapanese/blob/20240525/Dockerfile): based on `debian:bookworm-slim` (`linux/amd64`, `linux/arm64`)
 
 These images contain the following packages:
 
@@ -65,8 +65,15 @@ These images contain the following packages:
  * git-core
  * ghostscript
  * make
+ * python3-pygments
  * ruby
  * unzip
  * wget
  * xz-utils, xzdec
  * zstd
+
+
+--------------------
+
+Munehiro Yamamoto
+https://github.com/munepi
