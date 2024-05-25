@@ -1,7 +1,7 @@
 ## bootstrap
 FROM debian:bookworm-slim AS tllangjapanese-base
 
-LABEL maintainer="munepi@greencherry.jp"
+LABEL maintainer="munepixyz@gmail.com"
 
 #available: x86_64, aarch64
 ARG TLARCH
@@ -22,7 +22,7 @@ ENV PATH               ${TL_TEXDIR}/bin/${TLARCH}-linux:${PATH}
 RUN apt-get update && \
         apt-get install -y --no-install-recommends \
         locales make git-core unzip wget xz-utils xzdec zstd ca-certificates \
-        ghostscript ruby file imagemagick \
+        ghostscript ruby python3-pygments file imagemagick \
         ## for XeTeX
         fontconfig \
         && \
