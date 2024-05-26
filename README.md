@@ -45,18 +45,32 @@ Some tags below have additional/reduced packages:
     * tlmgr: add stix2-otf stix2-type1 (TL18+)
     * tlmgr: add noto-emoji (TL19+)
 
-These images are based on [munepi/tllangjapanese-base](https://hub.docker.com/r/munepi/tllangjapanese-base).
+
+## Run `munepi/tllangjapanese` container
+
+A common use of the image looks like this (linebreaks for readability):
+
+``` shell
+docker run --rm \
+       --volume "$(pwd):/data" \
+       --user $(id -u):$(id -g) \
+       munepi/tllangjapanese:latest    lualatex foo.tex
+```
+
+This will convert the LaTeX document file `foo.tex` in the current working directory into the PDF output file `foo.pdf`. 
+Note that Docker options go before the image name, here `munepi/tllangjapanese`, while `lualatex` options come after it.
+
+The `--volume` flag maps some local directory (lefthand side of the colons) to a directory in the container (righthand side), so that you have your source files available for `lualatex` to convert. 
+$(pwd) is quoted to protect against spaces in filenames.
+
+Ownership of the output file is determined by the user executing `lualatex` in the container. 
+This will generally be a user different from the local user. 
+It is hence a good idea to specify for docker the user and group IDs to use via the `--user` flag.
 
 
-# munepi/tllangjapanese-base
+## Base image
 
-custom Debian GNU/Linux image
-
-## Supported tags and respective `Dockerfile` links
-
- * [`latest` = `20240525`](https://github.com/munepi/docker-tllangjapanese/blob/20240525/Dockerfile): based on `debian:bookworm-slim` (`linux/amd64`, `linux/arm64`)
-
-These images contain the following packages:
+`munepi/tllangjapanese` is based on a custom Debian GNU/Linux image with the following packages:
 
  * ca-certificates
  * file
