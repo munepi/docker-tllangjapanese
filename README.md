@@ -8,7 +8,7 @@ custom enriched Japanese TeX Live environment image
  * [`2023` = `2023.20240323`](https://github.com/munepi/docker-tllangjapanese/blob/20240323/Dockerfile): TeX Live 2023 frozen (`x86_64-linux`, `aarch64-linux`)
  * [`2022` = `2022.20240225`](https://github.com/munepi/docker-tllangjapanese/blob/20240225/Dockerfile): TeX Live 2022 frozen (`x86_64-linux`, `aarch64-linux`)
  * [`2021` = `2021.20221111`](https://github.com/munepi/docker-tllangjapanese/blob/20221111/Dockerfile): TeX Live 2021 frozen (`x86_64-linux`, `aarch64-linux`)
- * [`2020` = `2020.20220424`](https://github.com/munepi/docker-tllangjapanese/blob/20220424/Dockerfile): TeX Live 2020 frozen (`x86_64-linux`, `aarch64-linux`)
+ * [`2020` = `2020.20220907`](https://github.com/munepi/docker-tllangjapanese/blob/20220614/Dockerfile): TeX Live 2020 frozen (`x86_64-linux`, `aarch64-linux`)
  * [`2019` = `2019.20221112`](https://github.com/munepi/docker-tllangjapanese/blob/20221112/Dockerfile): TeX Live 2019 frozen (`x86_64-linux`, `aarch64-linux`)
  * [`2018` = `2018.20220614`](https://github.com/munepi/docker-tllangjapanese/blob/20220614/Dockerfile): TeX Live 2018 frozen (`x86_64-linux`, `aarch64-linux`)
  * [`2017` = `2017.20230508`](https://github.com/munepi/docker-tllangjapanese/blob/20230506/Dockerfile): TeX Live 2017 frozen (`x86_64-linux`, `aarch64-linux`)
