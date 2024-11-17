@@ -4,7 +4,7 @@ custom enriched Japanese TeX Live environment image
 
 ## Supported tags and respective `Dockerfile` links
 
- * [`latest` = `2024` = `2024.20240525`](https://github.com/munepi/docker-tllangjapanese/blob/20240525/Dockerfile): TeX Live 2024 current (`x86_64-linux`, `aarch64-linux`)
+ * [`latest` = `2024` = `2024.20241118`](https://github.com/munepi/docker-tllangjapanese/blob/20241118/Dockerfile): TeX Live 2024 current (`x86_64-linux`, `aarch64-linux`)
  * [`2023` = `2023.20240323`](https://github.com/munepi/docker-tllangjapanese/blob/20240323/Dockerfile): TeX Live 2023 frozen (`x86_64-linux`, `aarch64-linux`)
  * [`2022` = `2022.20240225`](https://github.com/munepi/docker-tllangjapanese/blob/20240225/Dockerfile): TeX Live 2022 frozen (`x86_64-linux`, `aarch64-linux`)
  * [`2021` = `2021.20221111`](https://github.com/munepi/docker-tllangjapanese/blob/20221111/Dockerfile): TeX Live 2021 frozen (`x86_64-linux`, `aarch64-linux`)
@@ -29,6 +29,9 @@ These images contain the following components:
 
 Some tags below have additional/reduced packages:
 
+ * `20240708` or higher
+    * tlmgr: add bera grotesq (TL12+)
+    * tlmgr: add plex (TL17+)
  * `20240323` or higher
     * tlmgr: delete tex4ht (TL12+)
     * tlmgr: delete make4ht tex4ebook (TL14+)
