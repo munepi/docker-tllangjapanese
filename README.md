@@ -1,5 +1,4 @@
 # munepi/tllangjapanese
-
 custom enriched Japanese TeX Live environment image
 
 ## Supported tags and respective `Dockerfile` links
@@ -48,6 +47,8 @@ Some tags below have additional/reduced packages:
     * tlmgr: add stix2-otf stix2-type1 (TL18+)
     * tlmgr: add noto-emoji (TL19+)
 
+We also have pushed the latest image to the [GitHub Container Registry](https://github.com/users/munepi/packages/container/package/tllangjapanese).
+
 
 ## Run `munepi/tllangjapanese` container
 
@@ -89,6 +90,12 @@ It is hence a good idea to specify for docker the user and group IDs to use via 
  * xz-utils, xzdec
  * zstd
 
+
+## Related images
+
+ * `munepi/pandoc` https://hub.docker.com/r/munepi/pandoc
+ * `munepi/review` https://hub.docker.com/r/munepi/review
+ * Our GitHub Container Registry https://github.com/users/munepi/packages/
 
 --------------------
 
