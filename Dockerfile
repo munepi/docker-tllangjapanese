@@ -32,19 +32,27 @@ RUN echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen && \
         locale-gen en_US.UTF-8 && \
         update-locale en_US.UTF-8
 
+## gem/Ruby: Disable documentation generation
+RUN printf "%s\n"  \
+    "gem:      -N" \
+    "install:  -N" \
+    "update:   -N" \
+    > ${HOME}/.gemrc
+
 VOLUME ["${TL_TEXMFVAR}/luatex-cache"]
 CMD [ "/bin/bash" ]
 
 
 ## preset
 FROM tllangjapanese-base AS tllangjapanese-preset
-
-## TeX Live additional packages
+## additional packages
 ENV TL_ADDPKGS_TL12        \
     algorithms algorithmicx \
     bbold bbold-type1 \
+    bera \
     ebgaramond \
     fontawesome \
+    grotesq \
     inconsolata \
     mnsymbol \
     physics \
@@ -61,7 +69,8 @@ ENV TL_ADDPKGS_TL15        \
 ENV TL_ADDPKGS_TL16        \
     ${TL_ADDPKGS_TL15}
 ENV TL_ADDPKGS_TL17        \
-    ${TL_ADDPKGS_TL16}
+    ${TL_ADDPKGS_TL16} \
+    plex
 ENV TL_ADDPKGS_TL18        \
     ${TL_ADDPKGS_TL17} \
     stix2-otf stix2-type1
@@ -78,6 +87,8 @@ ENV TL_ADDPKGS_TL23        \
     ${TL_ADDPKGS_TL22}
 ENV TL_ADDPKGS_TL24        \
     ${TL_ADDPKGS_TL23}
+ENV TL_ADDPKGS_TL25        \
+    ${TL_ADDPKGS_TL24}
 
 ## reduced packages
 ENV TL_DELPKGS_TL12        \
@@ -109,6 +120,8 @@ ENV TL_DELPKGS_TL23        \
     ${TL_DELPKGS_TL22}
 ENV TL_DELPKGS_TL24        \
     ${TL_DELPKGS_TL23}
+ENV TL_DELPKGS_TL25        \
+    ${TL_DELPKGS_TL24}
 
 ## setup texmf-local & install the latest HaranoAji fonts
 RUN mkdir -p ${TL_TEXMFLOCAL} && \
@@ -124,772 +137,726 @@ RUN mkdir -p ${TL_TEXMFLOCAL} && \
 
 
 ## TeX Live 2012 frozen
-FROM tllangjapanese-preset AS tllangjapanese-tl12-base
+FROM tllangjapanese-preset AS tllangjapanese-tl12
 
 ENV TL_VERSION					2012
-
-RUN mkdir install-tl-unx && \
-        wget -qO- https://texlive.texjp.org/${TL_VERSION}/tlnet/install-tl-unx.tar.gz | \
-        tar -xz -C ./install-tl-unx --strip-components=1 && \
-        printf "%s\n" \
-            "TEXDIR ${TL_TEXDIR}" \
-            "TEXMFLOCAL ${TL_TEXMFLOCAL}" \
-            "TEXMFSYSVAR ${TL_TEXMFVAR}" \
-            "TEXMFSYSCONFIG ${TL_TEXMFCONFIG}" \
-            "TEXMFHOME ${TL_TEXMFLOCAL}" \
-            "TEXMFVAR ${TL_TEXMFVAR}" \
-            "TEXMFCONFIG ${TL_TEXMFCONFIG}" \
-            "selected_scheme scheme-minimal" \
-            "binary_${TLARCH}-linux 1" \
-            "collection-binextra 1" \
-            "collection-langjapanese 1" \
-            "collection-latexextra 1" \
-            "collection-luatex 1" \
-            "collection-fontsrecommended 1" \
-            "option_adjustrepo 0" \
-            "option_autobackup 0" \
-            "option_doc 0" \
-            "option_src 0" \
-        > ./install-tl-unx/texlive.profile && \
-        ./install-tl-unx/install-tl \
-        -repository http://texlive.texjp.org/${TL_VERSION}/tlnet/ \
-        -profile ./install-tl-unx/texlive.profile && \
-        rm -rf install-tl-unx/
-
-## update font map files & check current kanji profile
-RUN mkdir -p ${TL_TEXMFCONFIG}/web2c/ && \
-        printf "%s\n" \
-            "kanjiEmbed haranoaji" \
-            "kanjiVariant " \
-        > ${TL_TEXMFCONFIG}/web2c/updmap.cfg && \
-        mktexlsr ${TL_TEXMFLOCAL}/ ${TL_TEXMFCONFIG}/ && \
-        updmap-sys
-
-## setup suitable texmf.cnf
-RUN printf "%s\n" \
-        "texmf_casefold_search = 0" \
-        "font_mem_size = 16000000 " \
-        "font_max = 18000         " \
-        "ent_str_size = 2000      " \
-        "error_line = 254         " \
-        "half_error_line = 238    " \
-        "max_print_line = 1048576 " \
-    >>${TL_TEXDIR}/texmf.cnf
-
-
-FROM tllangjapanese-tl12-base AS tllangjapanese-tl12
-
 ENV TL_ADDPKGS		${TL_ADDPKGS_TL12}
 ENV TL_DELPKGS		${TL_DELPKGS_TL12}
 
+RUN mkdir install-tl-unx && \
+        wget -qO- https://texlive.texjp.org/${TL_VERSION}/tlnet/install-tl-unx.tar.gz | \
+        tar -xz -C ./install-tl-unx --strip-components=1 && \
+        printf "%s\n" \
+            "TEXDIR ${TL_TEXDIR}" \
+            "TEXMFLOCAL ${TL_TEXMFLOCAL}" \
+            "TEXMFSYSVAR ${TL_TEXMFVAR}" \
+            "TEXMFSYSCONFIG ${TL_TEXMFCONFIG}" \
+            "TEXMFHOME ${TL_TEXMFLOCAL}" \
+            "TEXMFVAR ${TL_TEXMFVAR}" \
+            "TEXMFCONFIG ${TL_TEXMFCONFIG}" \
+            "selected_scheme scheme-minimal" \
+            "binary_${TLARCH}-linux 1" \
+            "collection-binextra 1" \
+            "collection-langjapanese 1" \
+            "collection-latexextra 1" \
+            "collection-luatex 1" \
+            "collection-fontsrecommended 1" \
+            "option_adjustrepo 0" \
+            "option_autobackup 0" \
+            "option_doc 0" \
+            "option_src 0" \
+        > ./install-tl-unx/texlive.profile && \
+        ./install-tl-unx/install-tl \
+            -repository http://texlive.texjp.org/${TL_VERSION}/tlnet/ \
+            -profile ./install-tl-unx/texlive.profile && \
+        rm -rf install-tl-unx/
+
 RUN tlmgr install ${TL_ADDPKGS} && \
     tlmgr uninstall --force ${TL_DELPKGS}
+
+## update font map files & check current kanji profile
+RUN mkdir -p ${TL_TEXMFCONFIG}/web2c/ && \
+        printf "%s\n" \
+            "kanjiEmbed haranoaji" \
+            "kanjiVariant " \
+        > ${TL_TEXMFCONFIG}/web2c/updmap.cfg && \
+        mktexlsr ${TL_TEXMFLOCAL}/ ${TL_TEXMFCONFIG}/ && \
+        updmap-sys
+
+## setup suitable texmf.cnf
+RUN printf "%s\n" \
+        "texmf_casefold_search = 0" \
+        "font_mem_size = 16000000 " \
+        "font_max = 18000         " \
+        "ent_str_size = 2000      " \
+        "error_line = 254         " \
+        "half_error_line = 238    " \
+        "max_print_line = 1048576 " \
+    >>${TL_TEXDIR}/texmf.cnf
 
 
 ## TeX Live 2013 frozen
-FROM tllangjapanese-preset AS tllangjapanese-tl13-base
+FROM tllangjapanese-preset AS tllangjapanese-tl13
 
 ENV TL_VERSION					2013
-
-RUN mkdir install-tl-unx && \
-        wget -qO- https://texlive.texjp.org/${TL_VERSION}/tlnet/install-tl-unx.tar.gz | \
-        tar -xz -C ./install-tl-unx --strip-components=1 && \
-        printf "%s\n" \
-            "TEXDIR ${TL_TEXDIR}" \
-            "TEXMFLOCAL ${TL_TEXMFLOCAL}" \
-            "TEXMFSYSVAR ${TL_TEXMFVAR}" \
-            "TEXMFSYSCONFIG ${TL_TEXMFCONFIG}" \
-            "TEXMFHOME ${TL_TEXMFLOCAL}" \
-            "TEXMFVAR ${TL_TEXMFVAR}" \
-            "TEXMFCONFIG ${TL_TEXMFCONFIG}" \
-            "selected_scheme scheme-minimal" \
-            "binary_${TLARCH}-linux 1" \
-            "collection-binextra 1" \
-            "collection-langjapanese 1" \
-            "collection-latexextra 1" \
-            "collection-luatex 1" \
-            "collection-fontsrecommended 1" \
-            "option_adjustrepo 0" \
-            "option_autobackup 0" \
-            "option_doc 0" \
-            "option_src 0" \
-        > ./install-tl-unx/texlive.profile && \
-        ./install-tl-unx/install-tl \
-        -repository http://texlive.texjp.org/${TL_VERSION}/tlnet/ \
-        -profile ./install-tl-unx/texlive.profile && \
-        rm -rf install-tl-unx/
-
-## update font map files & check current kanji profile
-RUN mkdir -p ${TL_TEXMFCONFIG}/web2c/ && \
-        printf "%s\n" \
-            "kanjiEmbed haranoaji" \
-            "kanjiVariant " \
-        > ${TL_TEXMFCONFIG}/web2c/updmap.cfg && \
-        mktexlsr ${TL_TEXMFLOCAL}/ ${TL_TEXMFCONFIG}/ && \
-        updmap-sys
-
-## setup suitable texmf.cnf
-RUN printf "%s\n" \
-        "texmf_casefold_search = 0" \
-        "font_mem_size = 16000000 " \
-        "font_max = 18000         " \
-        "ent_str_size = 2000      " \
-        "error_line = 254         " \
-        "half_error_line = 238    " \
-        "max_print_line = 1048576 " \
-    >>${TL_TEXDIR}/texmf.cnf
-
-
-FROM tllangjapanese-tl13-base AS tllangjapanese-tl13
-
 ENV TL_ADDPKGS		${TL_ADDPKGS_TL13}
 ENV TL_DELPKGS		${TL_DELPKGS_TL13}
 
+RUN mkdir install-tl-unx && \
+        wget -qO- https://texlive.texjp.org/${TL_VERSION}/tlnet/install-tl-unx.tar.gz | \
+        tar -xz -C ./install-tl-unx --strip-components=1 && \
+        printf "%s\n" \
+            "TEXDIR ${TL_TEXDIR}" \
+            "TEXMFLOCAL ${TL_TEXMFLOCAL}" \
+            "TEXMFSYSVAR ${TL_TEXMFVAR}" \
+            "TEXMFSYSCONFIG ${TL_TEXMFCONFIG}" \
+            "TEXMFHOME ${TL_TEXMFLOCAL}" \
+            "TEXMFVAR ${TL_TEXMFVAR}" \
+            "TEXMFCONFIG ${TL_TEXMFCONFIG}" \
+            "selected_scheme scheme-minimal" \
+            "binary_${TLARCH}-linux 1" \
+            "collection-binextra 1" \
+            "collection-langjapanese 1" \
+            "collection-latexextra 1" \
+            "collection-luatex 1" \
+            "collection-fontsrecommended 1" \
+            "option_adjustrepo 0" \
+            "option_autobackup 0" \
+            "option_doc 0" \
+            "option_src 0" \
+        > ./install-tl-unx/texlive.profile && \
+        ./install-tl-unx/install-tl \
+            -repository http://texlive.texjp.org/${TL_VERSION}/tlnet/ \
+            -profile ./install-tl-unx/texlive.profile && \
+        rm -rf install-tl-unx/
+
 RUN tlmgr install ${TL_ADDPKGS} && \
     tlmgr uninstall --force ${TL_DELPKGS}
+
+## update font map files & check current kanji profile
+RUN mkdir -p ${TL_TEXMFCONFIG}/web2c/ && \
+        printf "%s\n" \
+            "kanjiEmbed haranoaji" \
+            "kanjiVariant " \
+        > ${TL_TEXMFCONFIG}/web2c/updmap.cfg && \
+        mktexlsr ${TL_TEXMFLOCAL}/ ${TL_TEXMFCONFIG}/ && \
+        updmap-sys
+
+## setup suitable texmf.cnf
+RUN printf "%s\n" \
+        "texmf_casefold_search = 0" \
+        "font_mem_size = 16000000 " \
+        "font_max = 18000         " \
+        "ent_str_size = 2000      " \
+        "error_line = 254         " \
+        "half_error_line = 238    " \
+        "max_print_line = 1048576 " \
+    >>${TL_TEXDIR}/texmf.cnf
 
 
 ## TeX Live 2014 frozen
-FROM tllangjapanese-preset AS tllangjapanese-tl14-base
+FROM tllangjapanese-preset AS tllangjapanese-tl14
 
 ENV TL_VERSION					2014
-
-RUN mkdir install-tl-unx && \
-        wget -qO- https://texlive.texjp.org/${TL_VERSION}/tlnet/install-tl-unx.tar.gz | \
-        tar -xz -C ./install-tl-unx --strip-components=1 && \
-        printf "%s\n" \
-            "TEXDIR ${TL_TEXDIR}" \
-            "TEXMFLOCAL ${TL_TEXMFLOCAL}" \
-            "TEXMFSYSVAR ${TL_TEXMFVAR}" \
-            "TEXMFSYSCONFIG ${TL_TEXMFCONFIG}" \
-            "TEXMFHOME ${TL_TEXMFLOCAL}" \
-            "TEXMFVAR ${TL_TEXMFVAR}" \
-            "TEXMFCONFIG ${TL_TEXMFCONFIG}" \
-            "selected_scheme scheme-minimal" \
-            "binary_${TLARCH}-linux 1" \
-            "collection-binextra 1" \
-            "collection-langjapanese 1" \
-            "collection-latexextra 1" \
-            "collection-luatex 1" \
-            "collection-fontsrecommended 1" \
-            "option_adjustrepo 0" \
-            "option_autobackup 0" \
-            "option_doc 0" \
-            "option_src 0" \
-        > ./install-tl-unx/texlive.profile && \
-        ./install-tl-unx/install-tl \
-        -repository http://texlive.texjp.org/${TL_VERSION}/tlnet/ \
-        -profile ./install-tl-unx/texlive.profile && \
-        rm -rf install-tl-unx/
-
-## update font map files & check current kanji profile
-RUN mkdir -p ${TL_TEXMFCONFIG}/web2c/ && \
-        printf "%s\n" \
-            "kanjiEmbed haranoaji" \
-            "kanjiVariant " \
-        > ${TL_TEXMFCONFIG}/web2c/updmap.cfg && \
-        mktexlsr ${TL_TEXMFLOCAL}/ ${TL_TEXMFCONFIG}/ && \
-        updmap-sys
-
-## setup suitable texmf.cnf
-RUN printf "%s\n" \
-        "texmf_casefold_search = 0" \
-        "font_mem_size = 16000000 " \
-        "font_max = 18000         " \
-        "ent_str_size = 2000      " \
-        "error_line = 254         " \
-        "half_error_line = 238    " \
-        "max_print_line = 1048576 " \
-    >>${TL_TEXDIR}/texmf.cnf
-
-
-FROM tllangjapanese-tl14-base AS tllangjapanese-tl14
-
 ENV TL_ADDPKGS		${TL_ADDPKGS_TL14}
 ENV TL_DELPKGS		${TL_DELPKGS_TL14}
 
+RUN mkdir install-tl-unx && \
+        wget -qO- https://texlive.texjp.org/${TL_VERSION}/tlnet/install-tl-unx.tar.gz | \
+        tar -xz -C ./install-tl-unx --strip-components=1 && \
+        printf "%s\n" \
+            "TEXDIR ${TL_TEXDIR}" \
+            "TEXMFLOCAL ${TL_TEXMFLOCAL}" \
+            "TEXMFSYSVAR ${TL_TEXMFVAR}" \
+            "TEXMFSYSCONFIG ${TL_TEXMFCONFIG}" \
+            "TEXMFHOME ${TL_TEXMFLOCAL}" \
+            "TEXMFVAR ${TL_TEXMFVAR}" \
+            "TEXMFCONFIG ${TL_TEXMFCONFIG}" \
+            "selected_scheme scheme-minimal" \
+            "binary_${TLARCH}-linux 1" \
+            "collection-binextra 1" \
+            "collection-langjapanese 1" \
+            "collection-latexextra 1" \
+            "collection-luatex 1" \
+            "collection-fontsrecommended 1" \
+            "option_adjustrepo 0" \
+            "option_autobackup 0" \
+            "option_doc 0" \
+            "option_src 0" \
+        > ./install-tl-unx/texlive.profile && \
+        ./install-tl-unx/install-tl \
+            -repository http://texlive.texjp.org/${TL_VERSION}/tlnet/ \
+            -profile ./install-tl-unx/texlive.profile && \
+        rm -rf install-tl-unx/
+
 RUN tlmgr install ${TL_ADDPKGS} && \
     tlmgr uninstall --force ${TL_DELPKGS}
+
+## update font map files & check current kanji profile
+RUN mkdir -p ${TL_TEXMFCONFIG}/web2c/ && \
+        printf "%s\n" \
+            "kanjiEmbed haranoaji" \
+            "kanjiVariant " \
+        > ${TL_TEXMFCONFIG}/web2c/updmap.cfg && \
+        mktexlsr ${TL_TEXMFLOCAL}/ ${TL_TEXMFCONFIG}/ && \
+        updmap-sys
+
+## setup suitable texmf.cnf
+RUN printf "%s\n" \
+        "texmf_casefold_search = 0" \
+        "font_mem_size = 16000000 " \
+        "font_max = 18000         " \
+        "ent_str_size = 2000      " \
+        "error_line = 254         " \
+        "half_error_line = 238    " \
+        "max_print_line = 1048576 " \
+    >>${TL_TEXDIR}/texmf.cnf
 
 
 ## TeX Live 2015 frozen
-FROM tllangjapanese-preset AS tllangjapanese-tl15-base
+FROM tllangjapanese-preset AS tllangjapanese-tl15
 
 ENV TL_VERSION					2015
-
-RUN mkdir install-tl-unx && \
-        wget -qO- https://texlive.texjp.org/${TL_VERSION}/tlnet/install-tl-unx.tar.gz | \
-        tar -xz -C ./install-tl-unx --strip-components=1 && \
-        printf "%s\n" \
-            "TEXDIR ${TL_TEXDIR}" \
-            "TEXMFLOCAL ${TL_TEXMFLOCAL}" \
-            "TEXMFSYSVAR ${TL_TEXMFVAR}" \
-            "TEXMFSYSCONFIG ${TL_TEXMFCONFIG}" \
-            "TEXMFHOME ${TL_TEXMFLOCAL}" \
-            "TEXMFVAR ${TL_TEXMFVAR}" \
-            "TEXMFCONFIG ${TL_TEXMFCONFIG}" \
-            "selected_scheme scheme-minimal" \
-            "binary_${TLARCH}-linux 1" \
-            "collection-binextra 1" \
-            "collection-langjapanese 1" \
-            "collection-latexextra 1" \
-            "collection-luatex 1" \
-            "collection-fontsrecommended 1" \
-            "option_adjustrepo 0" \
-            "option_autobackup 0" \
-            "option_doc 0" \
-            "option_src 0" \
-        > ./install-tl-unx/texlive.profile && \
-        ./install-tl-unx/install-tl \
-        -repository http://texlive.texjp.org/${TL_VERSION}/tlnet/ \
-        -profile ./install-tl-unx/texlive.profile && \
-        rm -rf install-tl-unx/
-
-## update font map files & check current kanji profile
-RUN mkdir -p ${TL_TEXMFCONFIG}/web2c/ && \
-        printf "%s\n" \
-            "kanjiEmbed haranoaji" \
-            "kanjiVariant " \
-        > ${TL_TEXMFCONFIG}/web2c/updmap.cfg && \
-        mktexlsr ${TL_TEXMFLOCAL}/ ${TL_TEXMFCONFIG}/ && \
-        updmap-sys
-
-## setup suitable texmf.cnf
-RUN printf "%s\n" \
-        "texmf_casefold_search = 0" \
-        "font_mem_size = 16000000 " \
-        "font_max = 18000         " \
-        "ent_str_size = 2000      " \
-        "error_line = 254         " \
-        "half_error_line = 238    " \
-        "max_print_line = 1048576 " \
-    >>${TL_TEXDIR}/texmf.cnf
-
-
-FROM tllangjapanese-tl15-base AS tllangjapanese-tl15
-
 ENV TL_ADDPKGS		${TL_ADDPKGS_TL15}
 ENV TL_DELPKGS		${TL_DELPKGS_TL15}
 
+RUN mkdir install-tl-unx && \
+        wget -qO- https://texlive.texjp.org/${TL_VERSION}/tlnet/install-tl-unx.tar.gz | \
+        tar -xz -C ./install-tl-unx --strip-components=1 && \
+        printf "%s\n" \
+            "TEXDIR ${TL_TEXDIR}" \
+            "TEXMFLOCAL ${TL_TEXMFLOCAL}" \
+            "TEXMFSYSVAR ${TL_TEXMFVAR}" \
+            "TEXMFSYSCONFIG ${TL_TEXMFCONFIG}" \
+            "TEXMFHOME ${TL_TEXMFLOCAL}" \
+            "TEXMFVAR ${TL_TEXMFVAR}" \
+            "TEXMFCONFIG ${TL_TEXMFCONFIG}" \
+            "selected_scheme scheme-minimal" \
+            "binary_${TLARCH}-linux 1" \
+            "collection-binextra 1" \
+            "collection-langjapanese 1" \
+            "collection-latexextra 1" \
+            "collection-luatex 1" \
+            "collection-fontsrecommended 1" \
+            "option_adjustrepo 0" \
+            "option_autobackup 0" \
+            "option_doc 0" \
+            "option_src 0" \
+        > ./install-tl-unx/texlive.profile && \
+        ./install-tl-unx/install-tl \
+            -repository http://texlive.texjp.org/${TL_VERSION}/tlnet/ \
+            -profile ./install-tl-unx/texlive.profile && \
+        rm -rf install-tl-unx/
+
 RUN tlmgr install ${TL_ADDPKGS} && \
     tlmgr uninstall --force ${TL_DELPKGS}
+
+## update font map files & check current kanji profile
+RUN mkdir -p ${TL_TEXMFCONFIG}/web2c/ && \
+        printf "%s\n" \
+            "kanjiEmbed haranoaji" \
+            "kanjiVariant " \
+        > ${TL_TEXMFCONFIG}/web2c/updmap.cfg && \
+        mktexlsr ${TL_TEXMFLOCAL}/ ${TL_TEXMFCONFIG}/ && \
+        updmap-sys
+
+## setup suitable texmf.cnf
+RUN printf "%s\n" \
+        "texmf_casefold_search = 0" \
+        "font_mem_size = 16000000 " \
+        "font_max = 18000         " \
+        "ent_str_size = 2000      " \
+        "error_line = 254         " \
+        "half_error_line = 238    " \
+        "max_print_line = 1048576 " \
+    >>${TL_TEXDIR}/texmf.cnf
 
 
 ## TeX Live 2016 frozen
-FROM tllangjapanese-preset AS tllangjapanese-tl16-base
+FROM tllangjapanese-preset AS tllangjapanese-tl16
 
 ENV TL_VERSION					2016
-
-RUN mkdir install-tl-unx && \
-        wget -qO- https://texlive.texjp.org/${TL_VERSION}/tlnet/install-tl-unx.tar.gz | \
-        tar -xz -C ./install-tl-unx --strip-components=1 && \
-        printf "%s\n" \
-            "TEXDIR ${TL_TEXDIR}" \
-            "TEXMFLOCAL ${TL_TEXMFLOCAL}" \
-            "TEXMFSYSVAR ${TL_TEXMFVAR}" \
-            "TEXMFSYSCONFIG ${TL_TEXMFCONFIG}" \
-            "TEXMFHOME ${TL_TEXMFLOCAL}" \
-            "TEXMFVAR ${TL_TEXMFVAR}" \
-            "TEXMFCONFIG ${TL_TEXMFCONFIG}" \
-            "selected_scheme scheme-minimal" \
-            "binary_${TLARCH}-linux 1" \
-            "collection-binextra 1" \
-            "collection-langjapanese 1" \
-            "collection-latexextra 1" \
-            "collection-luatex 1" \
-            "collection-fontsrecommended 1" \
-            "option_adjustrepo 0" \
-            "option_autobackup 0" \
-            "option_doc 0" \
-            "option_src 0" \
-        > ./install-tl-unx/texlive.profile && \
-        ./install-tl-unx/install-tl \
-        -repository http://texlive.texjp.org/${TL_VERSION}/tlnet/ \
-        -profile ./install-tl-unx/texlive.profile && \
-        rm -rf install-tl-unx/
-
-## update font map files & check current kanji profile
-RUN mkdir -p ${TL_TEXMFCONFIG}/web2c/ && \
-        printf "%s\n" \
-            "kanjiEmbed haranoaji" \
-            "kanjiVariant " \
-        > ${TL_TEXMFCONFIG}/web2c/updmap.cfg && \
-        mktexlsr ${TL_TEXMFLOCAL}/ ${TL_TEXMFCONFIG}/ && \
-        updmap-sys
-
-## setup suitable texmf.cnf
-RUN printf "%s\n" \
-        "texmf_casefold_search = 0" \
-        "font_mem_size = 16000000 " \
-        "font_max = 18000         " \
-        "ent_str_size = 2000      " \
-        "error_line = 254         " \
-        "half_error_line = 238    " \
-        "max_print_line = 1048576 " \
-    >>${TL_TEXDIR}/texmf.cnf
-
-
-FROM tllangjapanese-tl16-base AS tllangjapanese-tl16
-
 ENV TL_ADDPKGS		${TL_ADDPKGS_TL16}
 ENV TL_DELPKGS		${TL_DELPKGS_TL16}
 
+RUN mkdir install-tl-unx && \
+        wget -qO- https://texlive.texjp.org/${TL_VERSION}/tlnet/install-tl-unx.tar.gz | \
+        tar -xz -C ./install-tl-unx --strip-components=1 && \
+        printf "%s\n" \
+            "TEXDIR ${TL_TEXDIR}" \
+            "TEXMFLOCAL ${TL_TEXMFLOCAL}" \
+            "TEXMFSYSVAR ${TL_TEXMFVAR}" \
+            "TEXMFSYSCONFIG ${TL_TEXMFCONFIG}" \
+            "TEXMFHOME ${TL_TEXMFLOCAL}" \
+            "TEXMFVAR ${TL_TEXMFVAR}" \
+            "TEXMFCONFIG ${TL_TEXMFCONFIG}" \
+            "selected_scheme scheme-minimal" \
+            "binary_${TLARCH}-linux 1" \
+            "collection-binextra 1" \
+            "collection-langjapanese 1" \
+            "collection-latexextra 1" \
+            "collection-luatex 1" \
+            "collection-fontsrecommended 1" \
+            "option_adjustrepo 0" \
+            "option_autobackup 0" \
+            "option_doc 0" \
+            "option_src 0" \
+        > ./install-tl-unx/texlive.profile && \
+        ./install-tl-unx/install-tl \
+            -repository http://texlive.texjp.org/${TL_VERSION}/tlnet/ \
+            -profile ./install-tl-unx/texlive.profile && \
+        rm -rf install-tl-unx/
+
 RUN tlmgr install ${TL_ADDPKGS} && \
     tlmgr uninstall --force ${TL_DELPKGS}
+
+## update font map files & check current kanji profile
+RUN mkdir -p ${TL_TEXMFCONFIG}/web2c/ && \
+        printf "%s\n" \
+            "kanjiEmbed haranoaji" \
+            "kanjiVariant " \
+        > ${TL_TEXMFCONFIG}/web2c/updmap.cfg && \
+        mktexlsr ${TL_TEXMFLOCAL}/ ${TL_TEXMFCONFIG}/ && \
+        updmap-sys
+
+## setup suitable texmf.cnf
+RUN printf "%s\n" \
+        "texmf_casefold_search = 0" \
+        "font_mem_size = 16000000 " \
+        "font_max = 18000         " \
+        "ent_str_size = 2000      " \
+        "error_line = 254         " \
+        "half_error_line = 238    " \
+        "max_print_line = 1048576 " \
+    >>${TL_TEXDIR}/texmf.cnf
 
 
 ## TeX Live 2017 frozen
-FROM tllangjapanese-preset AS tllangjapanese-tl17-base
+FROM tllangjapanese-preset AS tllangjapanese-tl17
 
 ENV TL_VERSION					2017
-
-RUN mkdir install-tl-unx && \
-        wget -qO- https://texlive.texjp.org/${TL_VERSION}/tlnet/install-tl-unx.tar.gz | \
-        tar -xz -C ./install-tl-unx --strip-components=1 && \
-        printf "%s\n" \
-            "TEXDIR ${TL_TEXDIR}" \
-            "TEXMFLOCAL ${TL_TEXMFLOCAL}" \
-            "TEXMFSYSVAR ${TL_TEXMFVAR}" \
-            "TEXMFSYSCONFIG ${TL_TEXMFCONFIG}" \
-            "TEXMFHOME ${TL_TEXMFLOCAL}" \
-            "TEXMFVAR ${TL_TEXMFVAR}" \
-            "TEXMFCONFIG ${TL_TEXMFCONFIG}" \
-            "selected_scheme scheme-minimal" \
-            "binary_${TLARCH}-linux 1" \
-            "collection-binextra 1" \
-            "collection-langjapanese 1" \
-            "collection-latexextra 1" \
-            "collection-luatex 1" \
-            "collection-fontsrecommended 1" \
-            "option_adjustrepo 0" \
-            "option_autobackup 0" \
-            "option_doc 0" \
-            "option_src 0" \
-        > ./install-tl-unx/texlive.profile && \
-        ./install-tl-unx/install-tl \
-        -repository http://texlive.texjp.org/${TL_VERSION}/tlnet/ \
-        -profile ./install-tl-unx/texlive.profile && \
-        rm -rf install-tl-unx/
-
-## update font map files & check current kanji profile
-RUN mkdir -p ${TL_TEXMFCONFIG}/web2c/ && \
-        printf "%s\n" \
-            "jaEmbed haranoaji" \
-            "kanjiEmbed haranoaji" \
-            "kanjiVariant " \
-        > ${TL_TEXMFCONFIG}/web2c/updmap.cfg && \
-        mktexlsr ${TL_TEXMFLOCAL}/ ${TL_TEXMFCONFIG}/ && \
-        updmap-sys
-
-## setup suitable texmf.cnf
-RUN printf "%s\n" \
-        "texmf_casefold_search = 0" \
-        "font_mem_size = 16000000 " \
-        "font_max = 18000         " \
-        "ent_str_size = 2000      " \
-        "error_line = 254         " \
-        "half_error_line = 238    " \
-        "max_print_line = 1048576 " \
-    >>${TL_TEXDIR}/texmf.cnf
-
-
-FROM tllangjapanese-tl17-base AS tllangjapanese-tl17
-
 ENV TL_ADDPKGS		${TL_ADDPKGS_TL17}
 ENV TL_DELPKGS		${TL_DELPKGS_TL17}
 
+RUN mkdir install-tl-unx && \
+        wget -qO- https://texlive.texjp.org/${TL_VERSION}/tlnet/install-tl-unx.tar.gz | \
+        tar -xz -C ./install-tl-unx --strip-components=1 && \
+        printf "%s\n" \
+            "TEXDIR ${TL_TEXDIR}" \
+            "TEXMFLOCAL ${TL_TEXMFLOCAL}" \
+            "TEXMFSYSVAR ${TL_TEXMFVAR}" \
+            "TEXMFSYSCONFIG ${TL_TEXMFCONFIG}" \
+            "TEXMFHOME ${TL_TEXMFLOCAL}" \
+            "TEXMFVAR ${TL_TEXMFVAR}" \
+            "TEXMFCONFIG ${TL_TEXMFCONFIG}" \
+            "selected_scheme scheme-minimal" \
+            "binary_${TLARCH}-linux 1" \
+            "collection-binextra 1" \
+            "collection-langjapanese 1" \
+            "collection-latexextra 1" \
+            "collection-luatex 1" \
+            "collection-fontsrecommended 1" \
+            "option_adjustrepo 0" \
+            "option_autobackup 0" \
+            "option_doc 0" \
+            "option_src 0" \
+        > ./install-tl-unx/texlive.profile && \
+        ./install-tl-unx/install-tl \
+            -repository http://texlive.texjp.org/${TL_VERSION}/tlnet/ \
+            -profile ./install-tl-unx/texlive.profile && \
+        rm -rf install-tl-unx/
+
 RUN tlmgr install ${TL_ADDPKGS} && \
     tlmgr uninstall --force ${TL_DELPKGS}
+
+## update font map files & check current kanji profile
+RUN mkdir -p ${TL_TEXMFCONFIG}/web2c/ && \
+        printf "%s\n" \
+            "jaEmbed haranoaji" \
+            "kanjiEmbed haranoaji" \
+            "kanjiVariant " \
+        > ${TL_TEXMFCONFIG}/web2c/updmap.cfg && \
+        mktexlsr ${TL_TEXMFLOCAL}/ ${TL_TEXMFCONFIG}/ && \
+        updmap-sys
+
+## setup suitable texmf.cnf
+RUN printf "%s\n" \
+        "texmf_casefold_search = 0" \
+        "font_mem_size = 16000000 " \
+        "font_max = 18000         " \
+        "ent_str_size = 2000      " \
+        "error_line = 254         " \
+        "half_error_line = 238    " \
+        "max_print_line = 1048576 " \
+    >>${TL_TEXDIR}/texmf.cnf
 
 
 ## TeX Live 2018 frozen
-FROM tllangjapanese-preset AS tllangjapanese-tl18-base
+FROM tllangjapanese-preset AS tllangjapanese-tl18
 
 ENV TL_VERSION					2018
-
-RUN mkdir install-tl-unx && \
-        wget -qO- https://texlive.texjp.org/${TL_VERSION}/tlnet/install-tl-unx.tar.gz | \
-        tar -xz -C ./install-tl-unx --strip-components=1 && \
-        printf "%s\n" \
-            "TEXDIR ${TL_TEXDIR}" \
-            "TEXMFLOCAL ${TL_TEXMFLOCAL}" \
-            "TEXMFSYSVAR ${TL_TEXMFVAR}" \
-            "TEXMFSYSCONFIG ${TL_TEXMFCONFIG}" \
-            "TEXMFHOME ${TL_TEXMFLOCAL}" \
-            "TEXMFVAR ${TL_TEXMFVAR}" \
-            "TEXMFCONFIG ${TL_TEXMFCONFIG}" \
-            "selected_scheme scheme-minimal" \
-            "binary_${TLARCH}-linux 1" \
-            "collection-binextra 1" \
-            "collection-langjapanese 1" \
-            "collection-latexextra 1" \
-            "collection-luatex 1" \
-            "collection-fontsrecommended 1" \
-            "option_adjustrepo 0" \
-            "option_autobackup 0" \
-            "option_doc 0" \
-            "option_src 0" \
-        > ./install-tl-unx/texlive.profile && \
-        ./install-tl-unx/install-tl \
-        -repository http://texlive.texjp.org/${TL_VERSION}/tlnet/ \
-        -profile ./install-tl-unx/texlive.profile && \
-        rm -rf install-tl-unx/
-
-## update font map files & check current kanji profile
-RUN mkdir -p ${TL_TEXMFCONFIG}/web2c/ && \
-        printf "%s\n" \
-            "jaEmbed haranoaji" \
-            "kanjiEmbed haranoaji" \
-            "kanjiVariant " \
-        > ${TL_TEXMFCONFIG}/web2c/updmap.cfg && \
-        mktexlsr ${TL_TEXMFLOCAL}/ ${TL_TEXMFCONFIG}/ && \
-        updmap-sys
-
-## setup suitable texmf.cnf
-RUN printf "%s\n" \
-        "texmf_casefold_search = 0" \
-        "font_mem_size = 16000000 " \
-        "font_max = 18000         " \
-        "ent_str_size = 2000      " \
-        "error_line = 254         " \
-        "half_error_line = 238    " \
-        "max_print_line = 1048576 " \
-    >>${TL_TEXDIR}/texmf.cnf
-
-
-FROM tllangjapanese-tl18-base AS tllangjapanese-tl18
-
 ENV TL_ADDPKGS		${TL_ADDPKGS_TL18}
 ENV TL_DELPKGS		${TL_DELPKGS_TL18}
 
+RUN mkdir install-tl-unx && \
+        wget -qO- https://texlive.texjp.org/${TL_VERSION}/tlnet/install-tl-unx.tar.gz | \
+        tar -xz -C ./install-tl-unx --strip-components=1 && \
+        printf "%s\n" \
+            "TEXDIR ${TL_TEXDIR}" \
+            "TEXMFLOCAL ${TL_TEXMFLOCAL}" \
+            "TEXMFSYSVAR ${TL_TEXMFVAR}" \
+            "TEXMFSYSCONFIG ${TL_TEXMFCONFIG}" \
+            "TEXMFHOME ${TL_TEXMFLOCAL}" \
+            "TEXMFVAR ${TL_TEXMFVAR}" \
+            "TEXMFCONFIG ${TL_TEXMFCONFIG}" \
+            "selected_scheme scheme-minimal" \
+            "binary_${TLARCH}-linux 1" \
+            "collection-binextra 1" \
+            "collection-langjapanese 1" \
+            "collection-latexextra 1" \
+            "collection-luatex 1" \
+            "collection-fontsrecommended 1" \
+            "option_adjustrepo 0" \
+            "option_autobackup 0" \
+            "option_doc 0" \
+            "option_src 0" \
+        > ./install-tl-unx/texlive.profile && \
+        ./install-tl-unx/install-tl \
+            -repository http://texlive.texjp.org/${TL_VERSION}/tlnet/ \
+            -profile ./install-tl-unx/texlive.profile && \
+        rm -rf install-tl-unx/
+
 RUN tlmgr install ${TL_ADDPKGS} && \
     tlmgr uninstall --force ${TL_DELPKGS}
+
+## update font map files & check current kanji profile
+RUN mkdir -p ${TL_TEXMFCONFIG}/web2c/ && \
+        printf "%s\n" \
+            "jaEmbed haranoaji" \
+            "kanjiEmbed haranoaji" \
+            "kanjiVariant " \
+        > ${TL_TEXMFCONFIG}/web2c/updmap.cfg && \
+        mktexlsr ${TL_TEXMFLOCAL}/ ${TL_TEXMFCONFIG}/ && \
+        updmap-sys
+
+## setup suitable texmf.cnf
+RUN printf "%s\n" \
+        "texmf_casefold_search = 0" \
+        "font_mem_size = 16000000 " \
+        "font_max = 18000         " \
+        "ent_str_size = 2000      " \
+        "error_line = 254         " \
+        "half_error_line = 238    " \
+        "max_print_line = 1048576 " \
+    >>${TL_TEXDIR}/texmf.cnf
 
 
 ## TeX Live 2019 frozen
-FROM tllangjapanese-preset AS tllangjapanese-tl19-base
+FROM tllangjapanese-preset AS tllangjapanese-tl19
 
 ENV TL_VERSION					2019
-
-RUN mkdir install-tl-unx && \
-        wget -qO- https://texlive.texjp.org/${TL_VERSION}/tlnet/install-tl-unx.tar.gz | \
-        tar -xz -C ./install-tl-unx --strip-components=1 && \
-        printf "%s\n" \
-            "TEXDIR ${TL_TEXDIR}" \
-            "TEXMFLOCAL ${TL_TEXMFLOCAL}" \
-            "TEXMFSYSVAR ${TL_TEXMFVAR}" \
-            "TEXMFSYSCONFIG ${TL_TEXMFCONFIG}" \
-            "TEXMFHOME ${TL_TEXMFLOCAL}" \
-            "TEXMFVAR ${TL_TEXMFVAR}" \
-            "TEXMFCONFIG ${TL_TEXMFCONFIG}" \
-            "selected_scheme scheme-minimal" \
-            "binary_${TLARCH}-linux 1" \
-            "collection-binextra 1" \
-            "collection-langjapanese 1" \
-            "collection-latexextra 1" \
-            "collection-luatex 1" \
-            "collection-fontsrecommended 1" \
-            "option_adjustrepo 0" \
-            "option_autobackup 0" \
-            "option_doc 0" \
-            "option_src 0" \
-        > ./install-tl-unx/texlive.profile && \
-        ./install-tl-unx/install-tl \
-        -repository http://texlive.texjp.org/${TL_VERSION}/tlnet/ \
-        -profile ./install-tl-unx/texlive.profile && \
-        rm -rf install-tl-unx/
-
-## update font map files & check current kanji profile
-RUN mkdir -p ${TL_TEXMFCONFIG}/web2c/ && \
-        printf "%s\n" \
-            "jaEmbed haranoaji" \
-            "kanjiEmbed haranoaji" \
-            "kanjiVariant " \
-        > ${TL_TEXMFCONFIG}/web2c/updmap.cfg && \
-        mktexlsr ${TL_TEXMFLOCAL}/ ${TL_TEXMFCONFIG}/ && \
-        updmap-sys
-
-## setup suitable texmf.cnf
-RUN printf "%s\n" \
-        "texmf_casefold_search = 0" \
-        "font_mem_size = 16000000 " \
-        "font_max = 18000         " \
-        "ent_str_size = 2000      " \
-        "error_line = 254         " \
-        "half_error_line = 238    " \
-        "max_print_line = 1048576 " \
-    >>${TL_TEXDIR}/texmf.cnf
-
-
-FROM tllangjapanese-tl19-base AS tllangjapanese-tl19
-
 ENV TL_ADDPKGS		${TL_ADDPKGS_TL19}
 ENV TL_DELPKGS		${TL_DELPKGS_TL19}
 
+RUN mkdir install-tl-unx && \
+        wget -qO- https://texlive.texjp.org/${TL_VERSION}/tlnet/install-tl-unx.tar.gz | \
+        tar -xz -C ./install-tl-unx --strip-components=1 && \
+        printf "%s\n" \
+            "TEXDIR ${TL_TEXDIR}" \
+            "TEXMFLOCAL ${TL_TEXMFLOCAL}" \
+            "TEXMFSYSVAR ${TL_TEXMFVAR}" \
+            "TEXMFSYSCONFIG ${TL_TEXMFCONFIG}" \
+            "TEXMFHOME ${TL_TEXMFLOCAL}" \
+            "TEXMFVAR ${TL_TEXMFVAR}" \
+            "TEXMFCONFIG ${TL_TEXMFCONFIG}" \
+            "selected_scheme scheme-minimal" \
+            "binary_${TLARCH}-linux 1" \
+            "collection-binextra 1" \
+            "collection-langjapanese 1" \
+            "collection-latexextra 1" \
+            "collection-luatex 1" \
+            "collection-fontsrecommended 1" \
+            "option_adjustrepo 0" \
+            "option_autobackup 0" \
+            "option_doc 0" \
+            "option_src 0" \
+        > ./install-tl-unx/texlive.profile && \
+        ./install-tl-unx/install-tl \
+            -repository http://texlive.texjp.org/${TL_VERSION}/tlnet/ \
+            -profile ./install-tl-unx/texlive.profile && \
+        rm -rf install-tl-unx/
+
 RUN tlmgr install ${TL_ADDPKGS} && \
     tlmgr uninstall --force ${TL_DELPKGS}
+
+## update font map files & check current kanji profile
+RUN mkdir -p ${TL_TEXMFCONFIG}/web2c/ && \
+        printf "%s\n" \
+            "jaEmbed haranoaji" \
+            "kanjiEmbed haranoaji" \
+            "kanjiVariant " \
+        > ${TL_TEXMFCONFIG}/web2c/updmap.cfg && \
+        mktexlsr ${TL_TEXMFLOCAL}/ ${TL_TEXMFCONFIG}/ && \
+        updmap-sys
+
+## setup suitable texmf.cnf
+RUN printf "%s\n" \
+        "texmf_casefold_search = 0" \
+        "font_mem_size = 16000000 " \
+        "font_max = 18000         " \
+        "ent_str_size = 2000      " \
+        "error_line = 254         " \
+        "half_error_line = 238    " \
+        "max_print_line = 1048576 " \
+    >>${TL_TEXDIR}/texmf.cnf
 
 
 ## TeX Live 2020 frozen
-FROM tllangjapanese-preset AS tllangjapanese-tl20-base
+FROM tllangjapanese-preset AS tllangjapanese-tl20
 
 ENV TL_VERSION					2020
-
-RUN mkdir install-tl-unx && \
-        wget -qO- https://texlive.texjp.org/${TL_VERSION}/tlnet/install-tl-unx.tar.gz | \
-        tar -xz -C ./install-tl-unx --strip-components=1 && \
-        printf "%s\n" \
-            "TEXDIR ${TL_TEXDIR}" \
-            "TEXMFLOCAL ${TL_TEXMFLOCAL}" \
-            "TEXMFSYSVAR ${TL_TEXMFVAR}" \
-            "TEXMFSYSCONFIG ${TL_TEXMFCONFIG}" \
-            "TEXMFHOME ${TL_TEXMFLOCAL}" \
-            "TEXMFVAR ${TL_TEXMFVAR}" \
-            "TEXMFCONFIG ${TL_TEXMFCONFIG}" \
-            "selected_scheme scheme-minimal" \
-            "binary_${TLARCH}-linux 1" \
-            "collection-binextra 1" \
-            "collection-langjapanese 1" \
-            "collection-latexextra 1" \
-            "collection-luatex 1" \
-            "collection-fontsrecommended 1" \
-            "option_adjustrepo 0" \
-            "option_autobackup 0" \
-            "option_doc 0" \
-            "option_src 0" \
-        > ./install-tl-unx/texlive.profile && \
-        ./install-tl-unx/install-tl \
-        -repository https://texlive.texjp.org/${TL_VERSION}/tlnet/ \
-        -profile ./install-tl-unx/texlive.profile && \
-        rm -rf install-tl-unx/
-
-## update font map files & check current kanji profile
-RUN mkdir -p ${TL_TEXMFCONFIG}/web2c/ && \
-        printf "%s\n" \
-            "jaEmbed haranoaji" \
-            "kanjiEmbed haranoaji" \
-            "kanjiVariant " \
-        > ${TL_TEXMFCONFIG}/web2c/updmap.cfg && \
-        mktexlsr ${TL_TEXMFLOCAL}/ ${TL_TEXMFCONFIG}/ && \
-        updmap-sys
-
-## setup suitable texmf.cnf
-RUN printf "%s\n" \
-        "texmf_casefold_search = 0" \
-        "font_mem_size = 16000000 " \
-        "font_max = 18000         " \
-        "ent_str_size = 2000      " \
-        "error_line = 254         " \
-        "half_error_line = 238    " \
-        "max_print_line = 1048576 " \
-    >>${TL_TEXDIR}/texmf.cnf
-
-
-FROM tllangjapanese-tl20-base AS tllangjapanese-tl20
-
 ENV TL_ADDPKGS		${TL_ADDPKGS_TL20}
 ENV TL_DELPKGS		${TL_DELPKGS_TL20}
 
+RUN mkdir install-tl-unx && \
+        wget -qO- https://texlive.texjp.org/${TL_VERSION}/tlnet/install-tl-unx.tar.gz | \
+        tar -xz -C ./install-tl-unx --strip-components=1 && \
+        printf "%s\n" \
+            "TEXDIR ${TL_TEXDIR}" \
+            "TEXMFLOCAL ${TL_TEXMFLOCAL}" \
+            "TEXMFSYSVAR ${TL_TEXMFVAR}" \
+            "TEXMFSYSCONFIG ${TL_TEXMFCONFIG}" \
+            "TEXMFHOME ${TL_TEXMFLOCAL}" \
+            "TEXMFVAR ${TL_TEXMFVAR}" \
+            "TEXMFCONFIG ${TL_TEXMFCONFIG}" \
+            "selected_scheme scheme-minimal" \
+            "binary_${TLARCH}-linux 1" \
+            "collection-binextra 1" \
+            "collection-langjapanese 1" \
+            "collection-latexextra 1" \
+            "collection-luatex 1" \
+            "collection-fontsrecommended 1" \
+            "option_adjustrepo 0" \
+            "option_autobackup 0" \
+            "option_doc 0" \
+            "option_src 0" \
+        > ./install-tl-unx/texlive.profile && \
+        ./install-tl-unx/install-tl \
+            -repository https://texlive.texjp.org/${TL_VERSION}/tlnet/ \
+            -profile ./install-tl-unx/texlive.profile && \
+        rm -rf install-tl-unx/
+
 RUN tlmgr install ${TL_ADDPKGS} && \
     tlmgr uninstall --force ${TL_DELPKGS}
+
+## update font map files & check current kanji profile
+RUN mkdir -p ${TL_TEXMFCONFIG}/web2c/ && \
+        printf "%s\n" \
+            "jaEmbed haranoaji" \
+            "kanjiEmbed haranoaji" \
+            "kanjiVariant " \
+        > ${TL_TEXMFCONFIG}/web2c/updmap.cfg && \
+        mktexlsr ${TL_TEXMFLOCAL}/ ${TL_TEXMFCONFIG}/ && \
+        updmap-sys
+
+## setup suitable texmf.cnf
+RUN printf "%s\n" \
+        "texmf_casefold_search = 0" \
+        "font_mem_size = 16000000 " \
+        "font_max = 18000         " \
+        "ent_str_size = 2000      " \
+        "error_line = 254         " \
+        "half_error_line = 238    " \
+        "max_print_line = 1048576 " \
+    >>${TL_TEXDIR}/texmf.cnf
 
 
 ## TeX Live 2021 frozen
-FROM tllangjapanese-preset AS tllangjapanese-tl21-base
+FROM tllangjapanese-preset AS tllangjapanese-tl21
 
 ENV TL_VERSION					2021
-
-RUN mkdir install-tl-unx && \
-        wget -qO- https://texlive.texjp.org/${TL_VERSION}/tlnet/install-tl-unx.tar.gz | \
-        tar -xz -C ./install-tl-unx --strip-components=1 && \
-        printf "%s\n" \
-            "TEXDIR ${TL_TEXDIR}" \
-            "TEXMFLOCAL ${TL_TEXMFLOCAL}" \
-            "TEXMFSYSVAR ${TL_TEXMFVAR}" \
-            "TEXMFSYSCONFIG ${TL_TEXMFCONFIG}" \
-            "TEXMFHOME ${TL_TEXMFLOCAL}" \
-            "TEXMFVAR ${TL_TEXMFVAR}" \
-            "TEXMFCONFIG ${TL_TEXMFCONFIG}" \
-            "selected_scheme scheme-minimal" \
-            "binary_${TLARCH}-linux 1" \
-            "collection-binextra 1" \
-            "collection-langjapanese 1" \
-            "collection-latexextra 1" \
-            "collection-luatex 1" \
-            "collection-fontsrecommended 1" \
-            "option_adjustrepo 0" \
-            "option_autobackup 0" \
-            "option_doc 0" \
-            "option_src 0" \
-        > ./install-tl-unx/texlive.profile && \
-        ./install-tl-unx/install-tl \
-        -repository https://texlive.texjp.org/${TL_VERSION}/tlnet/ \
-        -profile ./install-tl-unx/texlive.profile && \
-        rm -rf install-tl-unx/
-
-## update font map files & check current kanji profile
-RUN mkdir -p ${TL_TEXMFCONFIG}/web2c/ && \
-        printf "%s\n" \
-            "jaEmbed haranoaji" \
-            "kanjiEmbed haranoaji" \
-            "kanjiVariant " \
-        > ${TL_TEXMFCONFIG}/web2c/updmap.cfg && \
-        mktexlsr ${TL_TEXMFLOCAL}/ ${TL_TEXMFCONFIG}/ && \
-        updmap-sys
-
-## setup suitable texmf.cnf
-RUN printf "%s\n" \
-        "texmf_casefold_search = 0" \
-        "font_mem_size = 16000000 " \
-        "font_max = 18000         " \
-        "ent_str_size = 2000      " \
-        "error_line = 254         " \
-        "half_error_line = 238    " \
-        "max_print_line = 1048576 " \
-    >>${TL_TEXDIR}/texmf.cnf
-
-
-FROM tllangjapanese-tl21-base AS tllangjapanese-tl21
-
 ENV TL_ADDPKGS		${TL_ADDPKGS_TL21}
 ENV TL_DELPKGS		${TL_DELPKGS_TL21}
 
+RUN mkdir install-tl-unx && \
+        wget -qO- https://texlive.texjp.org/${TL_VERSION}/tlnet/install-tl-unx.tar.gz | \
+        tar -xz -C ./install-tl-unx --strip-components=1 && \
+        printf "%s\n" \
+            "TEXDIR ${TL_TEXDIR}" \
+            "TEXMFLOCAL ${TL_TEXMFLOCAL}" \
+            "TEXMFSYSVAR ${TL_TEXMFVAR}" \
+            "TEXMFSYSCONFIG ${TL_TEXMFCONFIG}" \
+            "TEXMFHOME ${TL_TEXMFLOCAL}" \
+            "TEXMFVAR ${TL_TEXMFVAR}" \
+            "TEXMFCONFIG ${TL_TEXMFCONFIG}" \
+            "selected_scheme scheme-minimal" \
+            "binary_${TLARCH}-linux 1" \
+            "collection-binextra 1" \
+            "collection-langjapanese 1" \
+            "collection-latexextra 1" \
+            "collection-luatex 1" \
+            "collection-fontsrecommended 1" \
+            "option_adjustrepo 0" \
+            "option_autobackup 0" \
+            "option_doc 0" \
+            "option_src 0" \
+        > ./install-tl-unx/texlive.profile && \
+        ./install-tl-unx/install-tl \
+            -repository https://texlive.texjp.org/${TL_VERSION}/tlnet/ \
+            -profile ./install-tl-unx/texlive.profile && \
+        rm -rf install-tl-unx/
+
 RUN tlmgr install ${TL_ADDPKGS} && \
     tlmgr uninstall --force ${TL_DELPKGS}
+
+## update font map files & check current kanji profile
+RUN mkdir -p ${TL_TEXMFCONFIG}/web2c/ && \
+        printf "%s\n" \
+            "jaEmbed haranoaji" \
+            "kanjiEmbed haranoaji" \
+            "kanjiVariant " \
+        > ${TL_TEXMFCONFIG}/web2c/updmap.cfg && \
+        mktexlsr ${TL_TEXMFLOCAL}/ ${TL_TEXMFCONFIG}/ && \
+        updmap-sys
+
+## setup suitable texmf.cnf
+RUN printf "%s\n" \
+        "texmf_casefold_search = 0" \
+        "font_mem_size = 16000000 " \
+        "font_max = 18000         " \
+        "ent_str_size = 2000      " \
+        "error_line = 254         " \
+        "half_error_line = 238    " \
+        "max_print_line = 1048576 " \
+    >>${TL_TEXDIR}/texmf.cnf
 
 
 ## TeX Live 2022 frozen
-FROM tllangjapanese-preset AS tllangjapanese-tl22-base
+FROM tllangjapanese-preset AS tllangjapanese-tl22
 
 ENV TL_VERSION					2022
-
-RUN mkdir install-tl-unx && \
-        wget -qO- https://texlive.texjp.org/${TL_VERSION}/tlnet/install-tl-unx.tar.gz | \
-        tar -xz -C ./install-tl-unx --strip-components=1 && \
-        printf "%s\n" \
-            "TEXDIR ${TL_TEXDIR}" \
-            "TEXMFLOCAL ${TL_TEXMFLOCAL}" \
-            "TEXMFSYSVAR ${TL_TEXMFVAR}" \
-            "TEXMFSYSCONFIG ${TL_TEXMFCONFIG}" \
-            "TEXMFHOME ${TL_TEXMFLOCAL}" \
-            "TEXMFVAR ${TL_TEXMFVAR}" \
-            "TEXMFCONFIG ${TL_TEXMFCONFIG}" \
-            "selected_scheme scheme-minimal" \
-            "binary_${TLARCH}-linux 1" \
-            "collection-binextra 1" \
-            "collection-langjapanese 1" \
-            "collection-latexextra 1" \
-            "collection-luatex 1" \
-            "collection-fontsrecommended 1" \
-            "option_adjustrepo 0" \
-            "option_autobackup 0" \
-            "option_doc 0" \
-            "option_src 0" \
-        > ./install-tl-unx/texlive.profile && \
-        ./install-tl-unx/install-tl \
-        -repository https://texlive.texjp.org/${TL_VERSION}/tlnet/ \
-        -profile ./install-tl-unx/texlive.profile && \
-        rm -rf install-tl-unx/
-
-## update font map files & check current kanji profile
-RUN mkdir -p ${TL_TEXMFCONFIG}/web2c/ && \
-        printf "%s\n" \
-            "jaEmbed haranoaji" \
-            "kanjiEmbed haranoaji" \
-            "kanjiVariant " \
-        > ${TL_TEXMFCONFIG}/web2c/updmap.cfg && \
-        mktexlsr ${TL_TEXMFLOCAL}/ ${TL_TEXMFCONFIG}/ && \
-        updmap-sys
-
-## setup suitable texmf.cnf
-RUN printf "%s\n" \
-        "texmf_casefold_search = 0" \
-        "font_mem_size = 16000000 " \
-        "font_max = 18000         " \
-        "ent_str_size = 2000      " \
-        "error_line = 254         " \
-        "half_error_line = 238    " \
-        "max_print_line = 1048576 " \
-    >>${TL_TEXDIR}/texmf.cnf
-
-
-FROM tllangjapanese-tl22-base AS tllangjapanese-tl22
-
 ENV TL_ADDPKGS		${TL_ADDPKGS_TL22}
 ENV TL_DELPKGS		${TL_DELPKGS_TL22}
 
+RUN mkdir install-tl-unx && \
+        wget -qO- https://texlive.texjp.org/${TL_VERSION}/tlnet/install-tl-unx.tar.gz | \
+        tar -xz -C ./install-tl-unx --strip-components=1 && \
+        printf "%s\n" \
+            "TEXDIR ${TL_TEXDIR}" \
+            "TEXMFLOCAL ${TL_TEXMFLOCAL}" \
+            "TEXMFSYSVAR ${TL_TEXMFVAR}" \
+            "TEXMFSYSCONFIG ${TL_TEXMFCONFIG}" \
+            "TEXMFHOME ${TL_TEXMFLOCAL}" \
+            "TEXMFVAR ${TL_TEXMFVAR}" \
+            "TEXMFCONFIG ${TL_TEXMFCONFIG}" \
+            "selected_scheme scheme-minimal" \
+            "binary_${TLARCH}-linux 1" \
+            "collection-binextra 1" \
+            "collection-langjapanese 1" \
+            "collection-latexextra 1" \
+            "collection-luatex 1" \
+            "collection-fontsrecommended 1" \
+            "option_adjustrepo 0" \
+            "option_autobackup 0" \
+            "option_doc 0" \
+            "option_src 0" \
+        > ./install-tl-unx/texlive.profile && \
+        ./install-tl-unx/install-tl \
+            -repository https://texlive.texjp.org/${TL_VERSION}/tlnet/ \
+            -profile ./install-tl-unx/texlive.profile && \
+        rm -rf install-tl-unx/
+
 RUN tlmgr install ${TL_ADDPKGS} && \
     tlmgr uninstall --force ${TL_DELPKGS}
+
+## update font map files & check current kanji profile
+RUN mkdir -p ${TL_TEXMFCONFIG}/web2c/ && \
+        printf "%s\n" \
+            "jaEmbed haranoaji" \
+            "kanjiEmbed haranoaji" \
+            "kanjiVariant " \
+        > ${TL_TEXMFCONFIG}/web2c/updmap.cfg && \
+        mktexlsr ${TL_TEXMFLOCAL}/ ${TL_TEXMFCONFIG}/ && \
+        updmap-sys
+
+## setup suitable texmf.cnf
+RUN printf "%s\n" \
+        "texmf_casefold_search = 0" \
+        "font_mem_size = 16000000 " \
+        "font_max = 18000         " \
+        "ent_str_size = 2000      " \
+        "error_line = 254         " \
+        "half_error_line = 238    " \
+        "max_print_line = 1048576 " \
+    >>${TL_TEXDIR}/texmf.cnf
 
 
 ## TeX Live 2023 frozen
-FROM tllangjapanese-preset AS tllangjapanese-tl23-base
+FROM tllangjapanese-preset AS tllangjapanese-tl23
 
 ENV TL_VERSION					2023
-
-RUN mkdir install-tl-unx && \
-        wget -qO- https://texlive.texjp.org/${TL_VERSION}/tlnet/install-tl-unx.tar.gz | \
-        tar -xz -C ./install-tl-unx --strip-components=1 && \
-        printf "%s\n" \
-            "TEXDIR ${TL_TEXDIR}" \
-            "TEXMFLOCAL ${TL_TEXMFLOCAL}" \
-            "TEXMFSYSVAR ${TL_TEXMFVAR}" \
-            "TEXMFSYSCONFIG ${TL_TEXMFCONFIG}" \
-            "TEXMFHOME ${TL_TEXMFLOCAL}" \
-            "TEXMFVAR ${TL_TEXMFVAR}" \
-            "TEXMFCONFIG ${TL_TEXMFCONFIG}" \
-            "selected_scheme scheme-minimal" \
-            "binary_${TLARCH}-linux 1" \
-            "collection-binextra 1" \
-            "collection-langjapanese 1" \
-            "collection-latexextra 1" \
-            "collection-luatex 1" \
-            "collection-fontsrecommended 1" \
-            "option_adjustrepo 0" \
-            "option_autobackup 0" \
-            "option_doc 0" \
-            "option_src 0" \
-        > ./install-tl-unx/texlive.profile && \
-        ./install-tl-unx/install-tl \
-        -repository https://texlive.texjp.org/${TL_VERSION}/tlnet/ \
-        -profile ./install-tl-unx/texlive.profile && \
-        rm -rf install-tl-unx/
-
-## update font map files & check current kanji profile
-RUN mkdir -p ${TL_TEXMFCONFIG}/web2c/ && \
-        printf "%s\n" \
-            "jaEmbed haranoaji" \
-            "kanjiEmbed haranoaji" \
-            "kanjiVariant " \
-        > ${TL_TEXMFCONFIG}/web2c/updmap.cfg && \
-        mktexlsr ${TL_TEXMFLOCAL}/ ${TL_TEXMFCONFIG}/ && \
-        updmap-sys
-
-## setup suitable texmf.cnf
-RUN printf "%s\n" \
-        "texmf_casefold_search = 0" \
-        "font_mem_size = 16000000 " \
-        "font_max = 18000         " \
-        "ent_str_size = 2000      " \
-        "error_line = 254         " \
-        "half_error_line = 238    " \
-        "max_print_line = 1048576 " \
-    >>${TL_TEXDIR}/texmf.cnf
-
-
-FROM tllangjapanese-tl23-base AS tllangjapanese-tl23
-
 ENV TL_ADDPKGS		${TL_ADDPKGS_TL23}
 ENV TL_DELPKGS		${TL_DELPKGS_TL23}
 
+RUN mkdir install-tl-unx && \
+        wget -qO- https://texlive.texjp.org/${TL_VERSION}/tlnet/install-tl-unx.tar.gz | \
+        tar -xz -C ./install-tl-unx --strip-components=1 && \
+        printf "%s\n" \
+            "TEXDIR ${TL_TEXDIR}" \
+            "TEXMFLOCAL ${TL_TEXMFLOCAL}" \
+            "TEXMFSYSVAR ${TL_TEXMFVAR}" \
+            "TEXMFSYSCONFIG ${TL_TEXMFCONFIG}" \
+            "TEXMFHOME ${TL_TEXMFLOCAL}" \
+            "TEXMFVAR ${TL_TEXMFVAR}" \
+            "TEXMFCONFIG ${TL_TEXMFCONFIG}" \
+            "selected_scheme scheme-minimal" \
+            "binary_${TLARCH}-linux 1" \
+            "collection-binextra 1" \
+            "collection-langjapanese 1" \
+            "collection-latexextra 1" \
+            "collection-luatex 1" \
+            "collection-fontsrecommended 1" \
+            "option_adjustrepo 0" \
+            "option_autobackup 0" \
+            "option_doc 0" \
+            "option_src 0" \
+        > ./install-tl-unx/texlive.profile && \
+        ./install-tl-unx/install-tl \
+            -repository https://texlive.texjp.org/${TL_VERSION}/tlnet/ \
+            -profile ./install-tl-unx/texlive.profile && \
+        rm -rf install-tl-unx/
+
 RUN tlmgr install ${TL_ADDPKGS} && \
     tlmgr uninstall --force ${TL_DELPKGS}
 
+## update font map files & check current kanji profile
+RUN mkdir -p ${TL_TEXMFCONFIG}/web2c/ && \
+        printf "%s\n" \
+            "jaEmbed haranoaji" \
+            "kanjiEmbed haranoaji" \
+            "kanjiVariant " \
+        > ${TL_TEXMFCONFIG}/web2c/updmap.cfg && \
+        mktexlsr ${TL_TEXMFLOCAL}/ ${TL_TEXMFCONFIG}/ && \
+        updmap-sys
 
-## TeX Live 2024 current
-FROM tllangjapanese-preset AS tllangjapanese-tl24-base
+## setup suitable texmf.cnf
+RUN printf "%s\n" \
+        "texmf_casefold_search = 0" \
+        "font_mem_size = 16000000 " \
+        "font_max = 18000         " \
+        "ent_str_size = 2000      " \
+        "error_line = 254         " \
+        "half_error_line = 238    " \
+        "max_print_line = 1048576 " \
+    >>${TL_TEXDIR}/texmf.cnf
+
+
+## TeX Live 2024 frozen
+FROM tllangjapanese-preset AS tllangjapanese-tl24
 
 ENV TL_VERSION					2024
+ENV TL_ADDPKGS		${TL_ADDPKGS_TL24}
+ENV TL_DELPKGS		${TL_DELPKGS_TL24}
 
 RUN mkdir install-tl-unx && \
         wget -qO- https://texlive.texjp.org/${TL_VERSION}/tlnet/install-tl-unx.tar.gz | \
@@ -915,9 +882,12 @@ RUN mkdir install-tl-unx && \
             "option_src 0" \
         > ./install-tl-unx/texlive.profile && \
         ./install-tl-unx/install-tl \
-        -repository https://texlive.texjp.org/${TL_VERSION}/tlnet/ \
-        -profile ./install-tl-unx/texlive.profile && \
+            -repository https://texlive.texjp.org/${TL_VERSION}/tlnet/ \
+            -profile ./install-tl-unx/texlive.profile && \
         rm -rf install-tl-unx/
+
+RUN tlmgr install ${TL_ADDPKGS} && \
+    tlmgr uninstall --force ${TL_DELPKGS}
 
 ## update font map files & check current kanji profile
 RUN mkdir -p ${TL_TEXMFCONFIG}/web2c/ && \
@@ -941,12 +911,64 @@ RUN printf "%s\n" \
     >>${TL_TEXDIR}/texmf.cnf
 
 
-FROM tllangjapanese-tl24-base AS tllangjapanese-tl24
+## TeX Live 2025 pretest
+FROM tllangjapanese-preset AS tllangjapanese-tl25
 
-ENV TL_ADDPKGS		${TL_ADDPKGS_TL24}
-ENV TL_DELPKGS		${TL_DELPKGS_TL24}
+ENV TL_VERSION					2025
+ENV TL_ADDPKGS		${TL_ADDPKGS_TL25}
+ENV TL_DELPKGS		${TL_DELPKGS_TL25}
+
+RUN mkdir install-tl-unx && \
+        wget -qO- https://texlive.texjp.org/${TL_VERSION}/tlnet/install-tl-unx.tar.gz | \
+        tar -xz -C ./install-tl-unx --strip-components=1 && \
+        printf "%s\n" \
+            "TEXDIR ${TL_TEXDIR}" \
+            "TEXMFLOCAL ${TL_TEXMFLOCAL}" \
+            "TEXMFSYSVAR ${TL_TEXMFVAR}" \
+            "TEXMFSYSCONFIG ${TL_TEXMFCONFIG}" \
+            "TEXMFHOME ${TL_TEXMFLOCAL}" \
+            "TEXMFVAR ${TL_TEXMFVAR}" \
+            "TEXMFCONFIG ${TL_TEXMFCONFIG}" \
+            "selected_scheme scheme-minimal" \
+            "binary_${TLARCH}-linux 1" \
+            "collection-binextra 1" \
+            "collection-langjapanese 1" \
+            "collection-latexextra 1" \
+            "collection-luatex 1" \
+            "collection-fontsrecommended 1" \
+            "option_adjustrepo 0" \
+            "option_autobackup 0" \
+            "option_doc 0" \
+            "option_src 0" \
+        > ./install-tl-unx/texlive.profile && \
+        ./install-tl-unx/install-tl \
+            -repository https://texlive.texjp.org/${TL_VERSION}/tlnet/ \
+            -profile ./install-tl-unx/texlive.profile && \
+        rm -rf install-tl-unx/
 
 RUN tlmgr install ${TL_ADDPKGS} && \
     tlmgr uninstall --force ${TL_DELPKGS}
+
+## update font map files & check current kanji profile
+RUN mkdir -p ${TL_TEXMFCONFIG}/web2c/ && \
+        printf "%s\n" \
+            "jaEmbed haranoaji" \
+            "kanjiEmbed haranoaji" \
+            "kanjiVariant " \
+        > ${TL_TEXMFCONFIG}/web2c/updmap.cfg && \
+        mktexlsr ${TL_TEXMFLOCAL}/ ${TL_TEXMFCONFIG}/ && \
+        updmap-sys
+
+## setup suitable texmf.cnf
+RUN printf "%s\n" \
+        "texmf_casefold_search = 0" \
+        "font_mem_size = 16000000 " \
+        "font_max = 18000         " \
+        "ent_str_size = 2000      " \
+        "error_line = 254         " \
+        "half_error_line = 238    " \
+        "max_print_line = 1048576 " \
+    >>${TL_TEXDIR}/texmf.cnf
+
 
 # end of file
