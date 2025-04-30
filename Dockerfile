@@ -51,6 +51,7 @@ ENV TL_ADDPKGS_TL12        \
     bbold bbold-type1 \
     bera \
     ebgaramond \
+    esvect \
     fontawesome \
     grotesq \
     inconsolata \
@@ -111,7 +112,8 @@ ENV TL_DELPKGS_TL19        \
     ${TL_DELPKGS_TL18} \
     haranoaji haranoaji-extra
 ENV TL_DELPKGS_TL20        \
-    ${TL_DELPKGS_TL19}
+    ${TL_DELPKGS_TL19} \
+    tlshell tlshell.${TLARCH}-linux
 ENV TL_DELPKGS_TL21        \
     ${TL_DELPKGS_TL20}
 ENV TL_DELPKGS_TL22        \
