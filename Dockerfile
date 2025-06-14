@@ -2,10 +2,13 @@
 FROM debian:bookworm-slim AS tllangjapanese-base
 
 LABEL maintainer="munepixyz@gmail.com"
+LABEL org.opencontainers.image.description="custom enriched Japanese TeX Live environment image"
 
 #available: x86_64, aarch64
 ARG TLARCH
 ENV TLARCH=${TLARCH:-x86_64}
+
+
 
 ENV LANG en_US.UTF-8
 
@@ -913,8 +916,9 @@ RUN printf "%s\n" \
     >>${TL_TEXDIR}/texmf.cnf
 
 
-## TeX Live 2025 pretest
-FROM tllangjapanese-preset AS tllangjapanese-tl25
+## TeX Live 2025 current
+# FROM tllangjapanese-preset AS tllangjapanese-tl25
+FROM tllangjapanese-preset AS tllangjapanese-tl25-orig
 
 ENV TL_VERSION					2025
 ENV TL_ADDPKGS		${TL_ADDPKGS_TL25}
@@ -972,5 +976,13 @@ RUN printf "%s\n" \
         "max_print_line = 1048576 " \
     >>${TL_TEXDIR}/texmf.cnf
 
+
+########################################
+## Update the latest image from base image
+
+FROM munepi/tllangjapanese:2025.20250508 AS tllangjapanese-tl25
+RUN tlmgr update --self --all && \
+    tlmgr install ${TL_ADDPKGS} && \
+    tlmgr uninstall --force ${TL_DELPKGS} ||:
 
 # end of file
