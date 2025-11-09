@@ -3,7 +3,7 @@ custom enriched Japanese TeX Live environment image
 
 ## Supported tags and respective `Dockerfile` links
 
- * [`latest` = `2025` = `2025.20250615`](https://github.com/munepi/docker-tllangjapanese/blob/20250615/Dockerfile): TeX Live 2025 current (`x86_64-linux`, `aarch64-linux`)
+ * [`latest` = `2025` = `2025.20251110`](https://github.com/munepi/docker-tllangjapanese/blob/20251110/Dockerfile): TeX Live 2025 current (`x86_64-linux`, `aarch64-linux`)
  * [`2024` = `2024.20250310`](https://github.com/munepi/docker-tllangjapanese/blob/20250310/Dockerfile): TeX Live 2024 frozen (`x86_64-linux`, `aarch64-linux`)
  * [`2023` = `2023.20240323`](https://github.com/munepi/docker-tllangjapanese/blob/20240323/Dockerfile): TeX Live 2023 frozen (`x86_64-linux`, `aarch64-linux`)
  * [`2022` = `2022.20240225`](https://github.com/munepi/docker-tllangjapanese/blob/20240225/Dockerfile): TeX Live 2022 frozen (`x86_64-linux`, `aarch64-linux`)
@@ -92,6 +92,7 @@ It is hence a good idea to specify for docker the user and group IDs to use via 
  * unzip
  * wget
  * xz-utils, xzdec
+ * zip
  * zstd
 
 
