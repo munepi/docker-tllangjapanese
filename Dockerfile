@@ -6,25 +6,25 @@ LABEL org.opencontainers.image.description="custom enriched Japanese TeX Live en
 
 #available: x86_64, aarch64
 ARG TLARCH
-ENV TLARCH=${TLARCH:-x86_64}
+ENV TLARCH		${TLARCH:-x86_64}
 
 
 
-ENV LANG en_US.UTF-8
+ENV LANG		en_US.UTF-8
 
 ## portable TDS
-ENV TL_TEXDIR          /usr/local/texlive
-ENV TL_TEXMFLOCAL      ${TL_TEXDIR}/texmf-local
-ENV TL_TEXMFVAR        ${TL_TEXDIR}/texmf-var
-ENV TL_TEXMFCONFIG     ${TL_TEXDIR}/texmf-config
-ENV TL_TEXMFDIST       ${TL_TEXDIR}/texmf-dist
+ENV TL_TEXDIR			/usr/local/texlive
+ENV TL_TEXMFLOCAL		${TL_TEXDIR}/texmf-local
+ENV TL_TEXMFVAR		${TL_TEXDIR}/texmf-var
+ENV TL_TEXMFCONFIG		${TL_TEXDIR}/texmf-config
+ENV TL_TEXMFDIST		${TL_TEXDIR}/texmf-dist
 
-ENV PATH               ${TL_TEXDIR}/bin/${TLARCH}-linux:${PATH}
+ENV PATH		${TL_TEXDIR}/bin/${TLARCH}-linux:${PATH}
 
 ## setup
 RUN apt-get update && \
         apt-get install -y --no-install-recommends \
-        locales make git-core unzip wget xz-utils xzdec zstd ca-certificates \
+        locales make git-core zip unzip wget xz-utils xzdec zstd ca-certificates \
         ghostscript ruby python3-pygments file imagemagick \
         ## for XeTeX
         fontconfig \
@@ -917,8 +917,8 @@ RUN printf "%s\n" \
 
 
 ## TeX Live 2025 current
-# FROM tllangjapanese-preset AS tllangjapanese-tl25
-FROM tllangjapanese-preset AS tllangjapanese-tl25-orig
+FROM tllangjapanese-preset AS tllangjapanese-tl25
+# FROM tllangjapanese-preset AS tllangjapanese-tl25-orig
 
 ENV TL_VERSION					2025
 ENV TL_ADDPKGS		${TL_ADDPKGS_TL25}
@@ -977,12 +977,12 @@ RUN printf "%s\n" \
     >>${TL_TEXDIR}/texmf.cnf
 
 
-########################################
-## Update the latest image from base image
-
-FROM munepi/tllangjapanese:2025.20250508 AS tllangjapanese-tl25
-RUN tlmgr update --self --all && \
-    tlmgr install ${TL_ADDPKGS} && \
-    tlmgr uninstall --force ${TL_DELPKGS} ||:
+# ########################################
+# ## Update the latest image from base image
+#
+# FROM munepi/tllangjapanese:2025.20251110 AS tllangjapanese-tl25
+# RUN tlmgr update --self --all && \
+#     tlmgr install ${TL_ADDPKGS} && \
+#     tlmgr uninstall --force ${TL_DELPKGS} ||:
 
 # end of file
