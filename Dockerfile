@@ -6,20 +6,18 @@ LABEL org.opencontainers.image.description="custom enriched Japanese TeX Live en
 
 #available: x86_64, aarch64
 ARG TLARCH
-ENV TLARCH		${TLARCH:-x86_64}
+ENV TLARCH=${TLARCH:-x86_64}
 
-
-
-ENV LANG		en_US.UTF-8
+ENV LANG=en_US.UTF-8
 
 ## portable TDS
-ENV TL_TEXDIR			/usr/local/texlive
-ENV TL_TEXMFLOCAL		${TL_TEXDIR}/texmf-local
-ENV TL_TEXMFVAR		${TL_TEXDIR}/texmf-var
-ENV TL_TEXMFCONFIG		${TL_TEXDIR}/texmf-config
-ENV TL_TEXMFDIST		${TL_TEXDIR}/texmf-dist
+ENV TL_TEXDIR=/usr/local/texlive
+ENV TL_TEXMFLOCAL=${TL_TEXDIR}/texmf-local
+ENV TL_TEXMFVAR=${TL_TEXDIR}/texmf-var
+ENV TL_TEXMFCONFIG=${TL_TEXDIR}/texmf-config
+ENV TL_TEXMFDIST=${TL_TEXDIR}/texmf-dist
 
-ENV PATH		${TL_TEXDIR}/bin/${TLARCH}-linux:${PATH}
+ENV PATH=${TL_TEXDIR}/bin/${TLARCH}-linux:${PATH}
 
 ## setup
 RUN apt-get update && \
@@ -49,7 +47,7 @@ CMD [ "/bin/bash" ]
 ## preset
 FROM tllangjapanese-base AS tllangjapanese-preset
 ## additional packages
-ENV TL_ADDPKGS_TL12        \
+ENV TL_ADDPKGS_TL12="\
     algorithms algorithmicx \
     bbold bbold-type1 \
     bera \
@@ -61,72 +59,101 @@ ENV TL_ADDPKGS_TL12        \
     mnsymbol \
     physics \
     sourcecodepro sourcesanspro \
+    stmaryrd \
     systeme \
-    ulem
-ENV TL_ADDPKGS_TL13        \
-    ${TL_ADDPKGS_TL12}
-ENV TL_ADDPKGS_TL14        \
+    ulem \
+"
+ENV TL_ADDPKGS_TL13="\
+    ${TL_ADDPKGS_TL12} \
+"
+ENV TL_ADDPKGS_TL14="\
     ${TL_ADDPKGS_TL13} \
-    roboto
-ENV TL_ADDPKGS_TL15        \
-    ${TL_ADDPKGS_TL14}
-ENV TL_ADDPKGS_TL16        \
-    ${TL_ADDPKGS_TL15}
-ENV TL_ADDPKGS_TL17        \
+    roboto \
+"
+ENV TL_ADDPKGS_TL15="\
+    ${TL_ADDPKGS_TL14} \
+"
+ENV TL_ADDPKGS_TL16="\
+    ${TL_ADDPKGS_TL15} \
+"
+ENV TL_ADDPKGS_TL17="\
     ${TL_ADDPKGS_TL16} \
-    plex
-ENV TL_ADDPKGS_TL18        \
+    nicematrix \
+    plex \
+"
+ENV TL_ADDPKGS_TL18="\
     ${TL_ADDPKGS_TL17} \
-    stix2-otf stix2-type1
-ENV TL_ADDPKGS_TL19        \
+    stix2-otf stix2-type1 \
+"
+ENV TL_ADDPKGS_TL19="\
     ${TL_ADDPKGS_TL18} \
-    noto-emoji
-ENV TL_ADDPKGS_TL20        \
-    ${TL_ADDPKGS_TL19}
-ENV TL_ADDPKGS_TL21        \
-    ${TL_ADDPKGS_TL20}
-ENV TL_ADDPKGS_TL22        \
-    ${TL_ADDPKGS_TL21}
-ENV TL_ADDPKGS_TL23        \
-    ${TL_ADDPKGS_TL22}
-ENV TL_ADDPKGS_TL24        \
-    ${TL_ADDPKGS_TL23}
-ENV TL_ADDPKGS_TL25        \
-    ${TL_ADDPKGS_TL24}
-
+    noto-emoji \
+"
+ENV TL_ADDPKGS_TL20="\
+    ${TL_ADDPKGS_TL19} \
+"
+ENV TL_ADDPKGS_TL21="\
+    ${TL_ADDPKGS_TL20} \
+"
+ENV TL_ADDPKGS_TL22="\
+    ${TL_ADDPKGS_TL21} \
+"
+ENV TL_ADDPKGS_TL23="\
+    ${TL_ADDPKGS_TL22} \
+"
+ENV TL_ADDPKGS_TL24="\
+    ${TL_ADDPKGS_TL23} \
+"
+ENV TL_ADDPKGS_TL25="\
+    ${TL_ADDPKGS_TL24} \
+"
 ## reduced packages
-ENV TL_DELPKGS_TL12        \
-    tex4ht tex4ht.${TLARCH}-linux
-ENV TL_DELPKGS_TL13        \
-    ${TL_DELPKGS_TL12}
-ENV TL_DELPKGS_TL14        \
-    ${TL_DELPKGS_TL13}
-ENV TL_DELPKGS_TL15        \
+ENV TL_DELPKGS_TL12="\
+    tex4ht tex4ht.${TLARCH}-linux \
+"
+ENV TL_DELPKGS_TL13="\
+    ${TL_DELPKGS_TL12} \
+"
+ENV TL_DELPKGS_TL14="\
+    ${TL_DELPKGS_TL13} \
+"
+ENV TL_DELPKGS_TL15="\
     ${TL_DELPKGS_TL14} \
-    make4ht make4ht.${TLARCH}-linux tex4ebook tex4ebook.${TLARCH}-linux
-ENV TL_DELPKGS_TL16        \
-    ${TL_DELPKGS_TL15}
-ENV TL_DELPKGS_TL17        \
+    make4ht make4ht.${TLARCH}-linux tex4ebook tex4ebook.${TLARCH}-linux \
+"
+ENV TL_DELPKGS_TL16="\
+    ${TL_DELPKGS_TL15} \
+"
+ENV TL_DELPKGS_TL17="\
     ${TL_DELPKGS_TL16} \
-    tlcockpit tlcockpit.${TLARCH}-linux
-ENV TL_DELPKGS_TL18        \
-    ${TL_DELPKGS_TL17}
-ENV TL_DELPKGS_TL19        \
+    tlcockpit tlcockpit.${TLARCH}-linux \
+"
+ENV TL_DELPKGS_TL18="\
+    ${TL_DELPKGS_TL17} \
+"
+ENV TL_DELPKGS_TL19="\
     ${TL_DELPKGS_TL18} \
-    haranoaji haranoaji-extra
-ENV TL_DELPKGS_TL20        \
+    haranoaji haranoaji-extra \
+"
+ENV TL_DELPKGS_TL20="\
     ${TL_DELPKGS_TL19} \
-    tlshell tlshell.${TLARCH}-linux
-ENV TL_DELPKGS_TL21        \
-    ${TL_DELPKGS_TL20}
-ENV TL_DELPKGS_TL22        \
-    ${TL_DELPKGS_TL21}
-ENV TL_DELPKGS_TL23        \
-    ${TL_DELPKGS_TL22}
-ENV TL_DELPKGS_TL24        \
-    ${TL_DELPKGS_TL23}
-ENV TL_DELPKGS_TL25        \
-    ${TL_DELPKGS_TL24}
+    tlshell tlshell.${TLARCH}-linux \
+"
+ENV TL_DELPKGS_TL21="\
+    ${TL_DELPKGS_TL20} \
+"
+ENV TL_DELPKGS_TL22="\
+    ${TL_DELPKGS_TL21} \
+"
+ENV TL_DELPKGS_TL23="\
+    ${TL_DELPKGS_TL22} \
+"
+ENV TL_DELPKGS_TL24="\
+    ${TL_DELPKGS_TL23} \
+"
+ENV TL_DELPKGS_TL25="\
+    ${TL_DELPKGS_TL24} \
+"
 
 ## setup texmf-local & install the latest HaranoAji fonts
 RUN mkdir -p ${TL_TEXMFLOCAL} && \
@@ -144,9 +171,9 @@ RUN mkdir -p ${TL_TEXMFLOCAL} && \
 ## TeX Live 2012 frozen
 FROM tllangjapanese-preset AS tllangjapanese-tl12
 
-ENV TL_VERSION					2012
-ENV TL_ADDPKGS		${TL_ADDPKGS_TL12}
-ENV TL_DELPKGS		${TL_DELPKGS_TL12}
+ENV TL_VERSION=2012
+ENV TL_ADDPKGS=${TL_ADDPKGS_TL12}
+ENV TL_DELPKGS=${TL_DELPKGS_TL12}
 
 RUN mkdir install-tl-unx && \
         wget -qO- https://texlive.texjp.org/${TL_VERSION}/tlnet/install-tl-unx.tar.gz | \
@@ -203,9 +230,9 @@ RUN printf "%s\n" \
 ## TeX Live 2013 frozen
 FROM tllangjapanese-preset AS tllangjapanese-tl13
 
-ENV TL_VERSION					2013
-ENV TL_ADDPKGS		${TL_ADDPKGS_TL13}
-ENV TL_DELPKGS		${TL_DELPKGS_TL13}
+ENV TL_VERSION=2013
+ENV TL_ADDPKGS=${TL_ADDPKGS_TL13}
+ENV TL_DELPKGS=${TL_DELPKGS_TL13}
 
 RUN mkdir install-tl-unx && \
         wget -qO- https://texlive.texjp.org/${TL_VERSION}/tlnet/install-tl-unx.tar.gz | \
@@ -262,9 +289,9 @@ RUN printf "%s\n" \
 ## TeX Live 2014 frozen
 FROM tllangjapanese-preset AS tllangjapanese-tl14
 
-ENV TL_VERSION					2014
-ENV TL_ADDPKGS		${TL_ADDPKGS_TL14}
-ENV TL_DELPKGS		${TL_DELPKGS_TL14}
+ENV TL_VERSION=2014
+ENV TL_ADDPKGS=${TL_ADDPKGS_TL14}
+ENV TL_DELPKGS=${TL_DELPKGS_TL14}
 
 RUN mkdir install-tl-unx && \
         wget -qO- https://texlive.texjp.org/${TL_VERSION}/tlnet/install-tl-unx.tar.gz | \
@@ -321,9 +348,9 @@ RUN printf "%s\n" \
 ## TeX Live 2015 frozen
 FROM tllangjapanese-preset AS tllangjapanese-tl15
 
-ENV TL_VERSION					2015
-ENV TL_ADDPKGS		${TL_ADDPKGS_TL15}
-ENV TL_DELPKGS		${TL_DELPKGS_TL15}
+ENV TL_VERSION=2015
+ENV TL_ADDPKGS=${TL_ADDPKGS_TL15}
+ENV TL_DELPKGS=${TL_DELPKGS_TL15}
 
 RUN mkdir install-tl-unx && \
         wget -qO- https://texlive.texjp.org/${TL_VERSION}/tlnet/install-tl-unx.tar.gz | \
@@ -380,9 +407,9 @@ RUN printf "%s\n" \
 ## TeX Live 2016 frozen
 FROM tllangjapanese-preset AS tllangjapanese-tl16
 
-ENV TL_VERSION					2016
-ENV TL_ADDPKGS		${TL_ADDPKGS_TL16}
-ENV TL_DELPKGS		${TL_DELPKGS_TL16}
+ENV TL_VERSION=2016
+ENV TL_ADDPKGS=${TL_ADDPKGS_TL16}
+ENV TL_DELPKGS=${TL_DELPKGS_TL16}
 
 RUN mkdir install-tl-unx && \
         wget -qO- https://texlive.texjp.org/${TL_VERSION}/tlnet/install-tl-unx.tar.gz | \
@@ -439,9 +466,9 @@ RUN printf "%s\n" \
 ## TeX Live 2017 frozen
 FROM tllangjapanese-preset AS tllangjapanese-tl17
 
-ENV TL_VERSION					2017
-ENV TL_ADDPKGS		${TL_ADDPKGS_TL17}
-ENV TL_DELPKGS		${TL_DELPKGS_TL17}
+ENV TL_VERSION=2017
+ENV TL_ADDPKGS=${TL_ADDPKGS_TL17}
+ENV TL_DELPKGS=${TL_DELPKGS_TL17}
 
 RUN mkdir install-tl-unx && \
         wget -qO- https://texlive.texjp.org/${TL_VERSION}/tlnet/install-tl-unx.tar.gz | \
@@ -499,9 +526,9 @@ RUN printf "%s\n" \
 ## TeX Live 2018 frozen
 FROM tllangjapanese-preset AS tllangjapanese-tl18
 
-ENV TL_VERSION					2018
-ENV TL_ADDPKGS		${TL_ADDPKGS_TL18}
-ENV TL_DELPKGS		${TL_DELPKGS_TL18}
+ENV TL_VERSION=2018
+ENV TL_ADDPKGS=${TL_ADDPKGS_TL18}
+ENV TL_DELPKGS=${TL_DELPKGS_TL18}
 
 RUN mkdir install-tl-unx && \
         wget -qO- https://texlive.texjp.org/${TL_VERSION}/tlnet/install-tl-unx.tar.gz | \
@@ -559,9 +586,9 @@ RUN printf "%s\n" \
 ## TeX Live 2019 frozen
 FROM tllangjapanese-preset AS tllangjapanese-tl19
 
-ENV TL_VERSION					2019
-ENV TL_ADDPKGS		${TL_ADDPKGS_TL19}
-ENV TL_DELPKGS		${TL_DELPKGS_TL19}
+ENV TL_VERSION=2019
+ENV TL_ADDPKGS=${TL_ADDPKGS_TL19}
+ENV TL_DELPKGS=${TL_DELPKGS_TL19}
 
 RUN mkdir install-tl-unx && \
         wget -qO- https://texlive.texjp.org/${TL_VERSION}/tlnet/install-tl-unx.tar.gz | \
@@ -619,9 +646,9 @@ RUN printf "%s\n" \
 ## TeX Live 2020 frozen
 FROM tllangjapanese-preset AS tllangjapanese-tl20
 
-ENV TL_VERSION					2020
-ENV TL_ADDPKGS		${TL_ADDPKGS_TL20}
-ENV TL_DELPKGS		${TL_DELPKGS_TL20}
+ENV TL_VERSION=2020
+ENV TL_ADDPKGS=${TL_ADDPKGS_TL20}
+ENV TL_DELPKGS=${TL_DELPKGS_TL20}
 
 RUN mkdir install-tl-unx && \
         wget -qO- https://texlive.texjp.org/${TL_VERSION}/tlnet/install-tl-unx.tar.gz | \
@@ -679,9 +706,9 @@ RUN printf "%s\n" \
 ## TeX Live 2021 frozen
 FROM tllangjapanese-preset AS tllangjapanese-tl21
 
-ENV TL_VERSION					2021
-ENV TL_ADDPKGS		${TL_ADDPKGS_TL21}
-ENV TL_DELPKGS		${TL_DELPKGS_TL21}
+ENV TL_VERSION=2021
+ENV TL_ADDPKGS=${TL_ADDPKGS_TL21}
+ENV TL_DELPKGS=${TL_DELPKGS_TL21}
 
 RUN mkdir install-tl-unx && \
         wget -qO- https://texlive.texjp.org/${TL_VERSION}/tlnet/install-tl-unx.tar.gz | \
@@ -739,9 +766,9 @@ RUN printf "%s\n" \
 ## TeX Live 2022 frozen
 FROM tllangjapanese-preset AS tllangjapanese-tl22
 
-ENV TL_VERSION					2022
-ENV TL_ADDPKGS		${TL_ADDPKGS_TL22}
-ENV TL_DELPKGS		${TL_DELPKGS_TL22}
+ENV TL_VERSION=2022
+ENV TL_ADDPKGS=${TL_ADDPKGS_TL22}
+ENV TL_DELPKGS=${TL_DELPKGS_TL22}
 
 RUN mkdir install-tl-unx && \
         wget -qO- https://texlive.texjp.org/${TL_VERSION}/tlnet/install-tl-unx.tar.gz | \
@@ -799,9 +826,9 @@ RUN printf "%s\n" \
 ## TeX Live 2023 frozen
 FROM tllangjapanese-preset AS tllangjapanese-tl23
 
-ENV TL_VERSION					2023
-ENV TL_ADDPKGS		${TL_ADDPKGS_TL23}
-ENV TL_DELPKGS		${TL_DELPKGS_TL23}
+ENV TL_VERSION=2023
+ENV TL_ADDPKGS=${TL_ADDPKGS_TL23}
+ENV TL_DELPKGS=${TL_DELPKGS_TL23}
 
 RUN mkdir install-tl-unx && \
         wget -qO- https://texlive.texjp.org/${TL_VERSION}/tlnet/install-tl-unx.tar.gz | \
@@ -859,9 +886,9 @@ RUN printf "%s\n" \
 ## TeX Live 2024 frozen
 FROM tllangjapanese-preset AS tllangjapanese-tl24
 
-ENV TL_VERSION					2024
-ENV TL_ADDPKGS		${TL_ADDPKGS_TL24}
-ENV TL_DELPKGS		${TL_DELPKGS_TL24}
+ENV TL_VERSION=2024
+ENV TL_ADDPKGS=${TL_ADDPKGS_TL24}
+ENV TL_DELPKGS=${TL_DELPKGS_TL24}
 
 RUN mkdir install-tl-unx && \
         wget -qO- https://texlive.texjp.org/${TL_VERSION}/tlnet/install-tl-unx.tar.gz | \
@@ -920,9 +947,9 @@ RUN printf "%s\n" \
 FROM tllangjapanese-preset AS tllangjapanese-tl25
 # FROM tllangjapanese-preset AS tllangjapanese-tl25-orig
 
-ENV TL_VERSION					2025
-ENV TL_ADDPKGS		${TL_ADDPKGS_TL25}
-ENV TL_DELPKGS		${TL_DELPKGS_TL25}
+ENV TL_VERSION=2025
+ENV TL_ADDPKGS=${TL_ADDPKGS_TL25}
+ENV TL_DELPKGS=${TL_DELPKGS_TL25}
 
 RUN mkdir install-tl-unx && \
         wget -qO- https://texlive.texjp.org/${TL_VERSION}/tlnet/install-tl-unx.tar.gz | \

@@ -3,9 +3,9 @@ custom enriched Japanese TeX Live environment image
 
 ## Supported tags and respective `Dockerfile` links
 
- * [`latest` = `2025` = `2025.20251110`](https://github.com/munepi/docker-tllangjapanese/blob/20251110/Dockerfile): TeX Live 2025 current (`x86_64-linux`, `aarch64-linux`)
- * [`2024` = `2024.20250310`](https://github.com/munepi/docker-tllangjapanese/blob/20250310/Dockerfile): TeX Live 2024 frozen (`x86_64-linux`, `aarch64-linux`)
- * [`2023` = `2023.20240323`](https://github.com/munepi/docker-tllangjapanese/blob/20240323/Dockerfile): TeX Live 2023 frozen (`x86_64-linux`, `aarch64-linux`)
+ * [`latest` = `2025` = `2025.20260208`](https://github.com/munepi/docker-tllangjapanese/blob/20260208/Dockerfile): TeX Live 2025 current (`x86_64-linux`, `aarch64-linux`)
+ * [`2024` = `2024.20260208`](https://github.com/munepi/docker-tllangjapanese/blob/20260208/Dockerfile): TeX Live 2024 frozen (`x86_64-linux`, `aarch64-linux`)
+ * [`2023` = `2023.20260114`](https://github.com/munepi/docker-tllangjapanese/blob/20260114/Dockerfile): TeX Live 2023 frozen (`x86_64-linux`, `aarch64-linux`)
  * [`2022` = `2022.20240225`](https://github.com/munepi/docker-tllangjapanese/blob/20240225/Dockerfile): TeX Live 2022 frozen (`x86_64-linux`, `aarch64-linux`)
  * [`2021` = `2021.20221111`](https://github.com/munepi/docker-tllangjapanese/blob/20221111/Dockerfile): TeX Live 2021 frozen (`x86_64-linux`, `aarch64-linux`)
  * [`2020` = `2020.20220907`](https://github.com/munepi/docker-tllangjapanese/blob/20220614/Dockerfile): TeX Live 2020 frozen (`x86_64-linux`, `aarch64-linux`)
@@ -29,27 +29,30 @@ These images contain the following components:
 
 Some tags below have additional/reduced packages:
 
+ * `20260114` or higher
+    * TL12+: add stmaryrd
+    * TL17+: add nicematrix
  * `20250430` or higher
-    * tlmgr: add esvect (TL12+)
-    * tlmgr: delete tlshell (TL20+)
+    * TL12+: add esvect
+    * TL20+: delete tlshell
  * `20240708` or higher
-    * tlmgr: add bera grotesq (TL12+)
-    * tlmgr: add plex (TL17+)
+    * TL12+: add bera grotesq
+    * TL17+: add plex 
  * `20240323` or higher
-    * tlmgr: delete tex4ht (TL12+)
-    * tlmgr: delete make4ht tex4ebook (TL14+)
-    * tlmgr: delete tlcockpit (TL17+)
-    * tlmgr: delete haranoaji haranoaji-extra (TL19+)
+    * TL12+: delete tex4ht 
+    * TL14+: delete make4ht tex4ebook 
+    * TL17+: delete tlcockpit 
+    * TL19+: delete haranoaji haranoaji-extra 
  * `20240225` or higher 
-    * tlmgr: add algorithmicx bbold bbold-type1 (TL12+)
+    * TL12+: add algorithmicx bbold bbold-type1 
  * `20230602` or higher 
-    * tlmgr: add roboto (TL14+)
+    * TL14+: add roboto 
  * `20230506` or higher 
-    * tlmgr: add physics systeme (TL12+)
+    * TL12+: add physics systeme 
  * `20220614` or higher 
-    * tlmgr: add algorithms fontawesome mnsymbol ebgaramond inconsolata sourcecodepro sourcesanspro ulem (TL12+)
-    * tlmgr: add stix2-otf stix2-type1 (TL18+)
-    * tlmgr: add noto-emoji (TL19+)
+    * TL12+: add algorithms fontawesome mnsymbol ebgaramond inconsolata sourcecodepro sourcesanspro ulem 
+    * TL18+: add stix2-otf stix2-type1 
+    * TL19+: add noto-emoji 
 
 We also have pushed the latest image to the [GitHub Container Registry](https://github.com/users/munepi/packages/container/package/tllangjapanese).
 
