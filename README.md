@@ -3,7 +3,8 @@ custom enriched Japanese TeX Live environment image
 
 ## Supported tags and respective `Dockerfile` links
 
- * [`latest` = `2025` = `2025.20260208`](https://github.com/munepi/docker-tllangjapanese/blob/20260208/Dockerfile): TeX Live 2025 current (`x86_64-linux`, `aarch64-linux`)
+ * [`latest` = `2026` = `2026.20260314`](https://github.com/munepi/docker-tllangjapanese/blob/20260314/Dockerfile): TeX Live 2026 current (`x86_64-linux`, `aarch64-linux`)
+ * [ `2025` = `2025.20260314`](https://github.com/munepi/docker-tllangjapanese/blob/20260314/Dockerfile): TeX Live 2025 frozen (`x86_64-linux`, `aarch64-linux`)
  * [`2024` = `2024.20260208`](https://github.com/munepi/docker-tllangjapanese/blob/20260208/Dockerfile): TeX Live 2024 frozen (`x86_64-linux`, `aarch64-linux`)
  * [`2023` = `2023.20260114`](https://github.com/munepi/docker-tllangjapanese/blob/20260114/Dockerfile): TeX Live 2023 frozen (`x86_64-linux`, `aarch64-linux`)
  * [`2022` = `2022.20240225`](https://github.com/munepi/docker-tllangjapanese/blob/20240225/Dockerfile): TeX Live 2022 frozen (`x86_64-linux`, `aarch64-linux`)
