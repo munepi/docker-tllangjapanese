@@ -22,7 +22,8 @@ ENV TL_TEXMFVAR=${TL_TEXDIR}/texmf-var
 ENV TL_TEXMFCONFIG=${TL_TEXDIR}/texmf-config
 ENV TL_TEXMFDIST=${TL_TEXDIR}/texmf-dist
 
-ENV PATH=${TL_TEXDIR}/bin/${TLARCH}-linux:${PATH}
+ENV TL_BINDIR=${TL_TEXDIR}/bin/${TLARCH}-linux
+ENV PATH=${TL_BINDIR}:${PATH}
 
 ## setup
 RUN apt-get update && \
@@ -46,6 +47,10 @@ RUN printf "%s\n"  \
     > ${HOME}/.gemrc
 
 VOLUME ["${TL_TEXMFVAR}/luatex-cache"]
+WORKDIR /data
+# ENTRYPOINT ["/bin/bash", "-c"]
+# CMD ["pandoc", "--help"]
+ENTRYPOINT [ "" ]
 CMD [ "/bin/bash" ]
 
 
@@ -244,35 +249,64 @@ FROM tllangjapanese-preset AS tllangjapanese-tl20
 ENV TL_VERSION=2020 TL_ADDPKGS=${TL_ADDPKGS_TL20} TL_DELPKGS=${TL_DELPKGS_TL20}
 RUN setup-texlive.sh 2020 https modern
 
+FROM tllangjapanese-tl20 AS tllangjapanese-tl20-custom
+RUN rm ${TL_BINDIR}/xdvipdfmx
+COPY ${TLARCH}-linux_xdvipdfmx.v3-patch-spot-color-double-free  ${TL_BINDIR}/xdvipdfmx
+RUN chmod +x ${TL_BINDIR}/xdvipdfmx
+
 ## TeX Live 2021 frozen
 FROM tllangjapanese-preset AS tllangjapanese-tl21
 ENV TL_VERSION=2021 TL_ADDPKGS=${TL_ADDPKGS_TL21} TL_DELPKGS=${TL_DELPKGS_TL21}
 RUN setup-texlive.sh 2021 https modern
+
+FROM tllangjapanese-tl21 AS tllangjapanese-tl21-custom
+RUN rm ${TL_BINDIR}/xdvipdfmx
+COPY ${TLARCH}-linux_xdvipdfmx.v3-patch-spot-color-double-free  ${TL_BINDIR}/xdvipdfmx
+RUN chmod +x ${TL_BINDIR}/xdvipdfmx
 
 ## TeX Live 2022 frozen
 FROM tllangjapanese-preset AS tllangjapanese-tl22
 ENV TL_VERSION=2022 TL_ADDPKGS=${TL_ADDPKGS_TL22} TL_DELPKGS=${TL_DELPKGS_TL22}
 RUN setup-texlive.sh 2022 https modern
 
+FROM tllangjapanese-tl22 AS tllangjapanese-tl22-custom
+RUN rm ${TL_BINDIR}/xdvipdfmx
+COPY ${TLARCH}-linux_xdvipdfmx.v3-patch-spot-color-double-free  ${TL_BINDIR}/xdvipdfmx
+RUN chmod +x ${TL_BINDIR}/xdvipdfmx
+
 ## TeX Live 2023 frozen
 FROM tllangjapanese-preset AS tllangjapanese-tl23
 ENV TL_VERSION=2023 TL_ADDPKGS=${TL_ADDPKGS_TL23} TL_DELPKGS=${TL_DELPKGS_TL23}
 RUN setup-texlive.sh 2023 https modern
+
+FROM tllangjapanese-tl23 AS tllangjapanese-tl23-custom
+RUN rm ${TL_BINDIR}/xdvipdfmx
+COPY ${TLARCH}-linux_xdvipdfmx.v3-patch-spot-color-double-free  ${TL_BINDIR}/xdvipdfmx
+RUN chmod +x ${TL_BINDIR}/xdvipdfmx
 
 ## TeX Live 2024 frozen
 FROM tllangjapanese-preset AS tllangjapanese-tl24
 ENV TL_VERSION=2024 TL_ADDPKGS=${TL_ADDPKGS_TL24} TL_DELPKGS=${TL_DELPKGS_TL24}
 RUN setup-texlive.sh 2024 https modern
 
+FROM tllangjapanese-tl24 AS tllangjapanese-tl24-custom
+RUN rm ${TL_BINDIR}/xdvipdfmx
+COPY ${TLARCH}-linux_xdvipdfmx.v3-patch-spot-color-double-free  ${TL_BINDIR}/xdvipdfmx
+RUN chmod +x ${TL_BINDIR}/xdvipdfmx
+
 ## TeX Live 2025 frozen
 FROM tllangjapanese-preset AS tllangjapanese-tl25
 ENV TL_VERSION=2025 TL_ADDPKGS=${TL_ADDPKGS_TL25} TL_DELPKGS=${TL_DELPKGS_TL25}
 RUN setup-texlive.sh 2025 https modern
 
+FROM tllangjapanese-tl25 AS tllangjapanese-tl25-custom
+RUN rm ${TL_BINDIR}/xdvipdfmx
+COPY ${TLARCH}-linux_xdvipdfmx.v3-patch-spot-color-double-free  ${TL_BINDIR}/xdvipdfmx
+RUN chmod +x ${TL_BINDIR}/xdvipdfmx
+
 ## TeX Live 2026 current
 # FROM tllangjapanese-preset AS tllangjapanese-tl26-orig
 FROM tllangjapanese-preset AS tllangjapanese-tl26
-ARG TL_REPO_PREFIX
 ENV TL_VERSION=2026 TL_ADDPKGS=${TL_ADDPKGS_TL26} TL_DELPKGS=${TL_DELPKGS_TL26}
 RUN setup-texlive.sh 2026 https modern
 

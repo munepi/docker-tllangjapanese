@@ -4,9 +4,9 @@ custom enriched Japanese TeX Live environment image
 ## Supported tags and respective `Dockerfile` links
 
  * [`latest` = `2026` = `2026.20260314`](https://github.com/munepi/docker-tllangjapanese/blob/20260314/Dockerfile): TeX Live 2026 current (`x86_64-linux`, `aarch64-linux`)
- * [ `2025` = `2025.20260314`](https://github.com/munepi/docker-tllangjapanese/blob/20260314/Dockerfile): TeX Live 2025 frozen (`x86_64-linux`, `aarch64-linux`)
- * [`2024` = `2024.20260208`](https://github.com/munepi/docker-tllangjapanese/blob/20260208/Dockerfile): TeX Live 2024 frozen (`x86_64-linux`, `aarch64-linux`)
- * [`2023` = `2023.20260114`](https://github.com/munepi/docker-tllangjapanese/blob/20260114/Dockerfile): TeX Live 2023 frozen (`x86_64-linux`, `aarch64-linux`)
+ * [ `2025` = `2025.20260628`](https://github.com/munepi/docker-tllangjapanese/blob/20260628/Dockerfile), [ `2025-custom` = `2025-custom.20260628`](https://github.com/munepi/docker-tllangjapanese/blob/20260628/Dockerfile): TeX Live 2025 frozen (`x86_64-linux`, `aarch64-linux`)
+ * [`2024` = `2024.20260628`](https://github.com/munepi/docker-tllangjapanese/blob/20260628/Dockerfile), [`2024-custom` = `2024-custom.20260628`](https://github.com/munepi/docker-tllangjapanese/blob/20260628/Dockerfile): TeX Live 2024 frozen (`x86_64-linux`, `aarch64-linux`)
+ * [`2023` = `2023.20260628`](https://github.com/munepi/docker-tllangjapanese/blob/20260628/Dockerfile), [`2023-custom` = `2023-custom.20260628`](https://github.com/munepi/docker-tllangjapanese/blob/20260628/Dockerfile): TeX Live 2023 frozen (`x86_64-linux`, `aarch64-linux`)
  * [`2022` = `2022.20240225`](https://github.com/munepi/docker-tllangjapanese/blob/20240225/Dockerfile): TeX Live 2022 frozen (`x86_64-linux`, `aarch64-linux`)
  * [`2021` = `2021.20221111`](https://github.com/munepi/docker-tllangjapanese/blob/20221111/Dockerfile): TeX Live 2021 frozen (`x86_64-linux`, `aarch64-linux`)
  * [`2020` = `2020.20220907`](https://github.com/munepi/docker-tllangjapanese/blob/20220614/Dockerfile): TeX Live 2020 frozen (`x86_64-linux`, `aarch64-linux`)
